@@ -6,7 +6,17 @@
     "command": "labplot2",
     "rename-icon": "labplot2",
     "finish-args": ["--share=ipc", "--socket=x11", "--socket=wayland" ],
-
+    "cleanup": [
+        "/include",
+	"/lib/cmake",
+        "/lib/pkgconfig",
+	"/lib/*.la",
+	"/lib/*.a",
+	"/mkspecs",
+	"/share/aclocal",
+	"/share/info",
+	"/share/man"
+    ],
     "modules": [
         {
             "name": "gsl",
@@ -20,6 +30,7 @@
         },
         {
             "name": "hdf5",
+	    "cleanup": [ "/share/hdf5_examples" ],
             "sources": [
                 {
                     "type": "archive",
@@ -105,6 +116,7 @@
                             "name": "eigen",
                             "buildsystem": "cmake-ninja",
                             "builddir": true,
+			    "cleanup": [ "*" ],
                             "sources": [
                                 {
                                     "type": "archive",
@@ -139,10 +151,9 @@
                                     "sha256": "63f5a4713ecafc86de51bfad89cc07bb788e9bba24ebbf0c4ca637621aadb6a9"
                                 }
 	                    ],
-                            "cleanup": [ "/bin", "/include", "/lib/openjpeg-*", "/lib/pkgconfig" ]
+                            "cleanup": [ "/bin", "/lib/openjpeg-*" ]
                         }
-                    ],
-                    "cleanup": [ "/include", "/lib/pkgconfig" ]
+                    ]
                 }
             ]
         },
