@@ -1,8 +1,51 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 45514e2fa..1c113b113 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -147,7 +147,7 @@ endif ()
+ add_definitions (${QT_DEFINITIONS} ${QT_QTDBUS_DEFINITIONS})
+ include_directories (${QDBUS_INCLUDE_DIRS} ${CMAKE_SOURCE_DIR} ${CMAKE_BINARY_DIR})
+ set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake ${CMAKE_MODULE_PATH})
+-add_definitions (-DLVERSION=\"2.8.1\")
++add_definitions (-DLVERSION=\"2.8.2\")
+ add_definitions (-DCXX_COMPILER=\"${CMAKE_CXX_COMPILER_ID}\ ${CMAKE_CXX_COMPILER_VERSION}\")
+ add_definitions (-DCXX_COMPILER_FLAGS=\"${CMAKE_CXX_FLAGS}\")
+ set(BUILD_SHARED_LIBS true)
+diff --git a/ChangeLog b/ChangeLog
+index 9b501c1c2..ea33fabd5 100644
+--- a/ChangeLog
++++ b/ChangeLog
+@@ -1,3 +1,12 @@
++-----2.9.0 -----
++-----2.8.2 -----
++Bug fixes:
++	* [CAS] Fixed the regression introduced after the python2 backend was deprecated in Cantor
++	* [Axis label] Fix "power of" notations for negative values, show "0" for zero
++		and improve auto precision for small values
++	* BUG 427190 - Fixed resetting parser error count on some platforms (Debian, Manjaro)
++	* BUG 429110 - Support semicolon as function argument separator for locale with comma as decimal separator
++	* BUG 429368 - Fix validation of custom model equation in fit dock
+ -----2.8.1 -----
+ 	* [worksheet] allow to change the background color for axis labels (default: transparent)
+ 	* [worksheet] allow to copy the plot cursor cordinates
+diff --git a/admin/create-dmg-craft.sh b/admin/create-dmg-craft.sh
+index 3fe57d88f..d0370ed73 100755
+--- a/admin/create-dmg-craft.sh
++++ b/admin/create-dmg-craft.sh
+@@ -8,7 +8,7 @@
+ set -e
+ 
+ NAME=labplot2
+-VERSION=2.8.1
++VERSION=2.8.2
+ PREFIX=kde/Applications
+ INPREFIX=$PREFIX/$NAME.app/Contents
+ TMPDIR=LabPlot2
 diff --git a/org.kde.labplot2.appdata.xml b/org.kde.labplot2.appdata.xml
-index 9a5f6a29b..a069fbc1b 100644
+index 9a5f6a29b..039639cff 100644
 --- a/org.kde.labplot2.appdata.xml
 +++ b/org.kde.labplot2.appdata.xml
-@@ -201,4 +201,9 @@
+@@ -201,4 +201,12 @@
    <provides>
      <binary>labplot2</binary>
    </provides>
@@ -11,22 +54,10 @@ index 9a5f6a29b..a069fbc1b 100644
 +    <release version="2.8.1" date="2020-11-13"/>
 +    <release version="2.8.0" date="2020-09-16"/>
 +  </releases>
++  <custom>
++    <value key="KDE::windows_store">https://www.microsoft.com/store/apps/9ngxfc68925l</value>
++  </custom>
  </component>
-diff --git a/ChangeLog b/ChangeLog
-index 9b501c1c2..d1e509ea1 100644
---- a/ChangeLog
-+++ b/ChangeLog
-@@ -1,3 +1,10 @@
-+-----2.9.0 -----
-+-----2.8.2 -----
-+Bug fixes:
-+	* [CAS] fixed the regression introduced after the python2 backend was deprecated in Cantor
-+	* BUG 427190 - Fixed resetting parser error count on some platforms (Debian, Manjaro)
-+	* BUG 429110 - Support semicolon as function argument separator for locale with comma as decimal separator
-+	* BUG 429368 - Fix validation of custom model equation in fit dock
- -----2.8.1 -----
- 	* [worksheet] allow to change the background color for axis labels (default: transparent)
- 	* [worksheet] allow to copy the plot cursor cordinates
 diff --git a/src/backend/cantorWorksheet/VariableParser.cpp b/src/backend/cantorWorksheet/VariableParser.cpp
 index a3c9a2db9..1f240ce62 100644
 --- a/src/backend/cantorWorksheet/VariableParser.cpp
@@ -45,7 +76,7 @@ index a3c9a2db9..1f240ce62 100644
  	else if (m_backendName.compare(QStringLiteral("Sage"), Qt::CaseInsensitive) == 0)
  		parsePythonValues();
 diff --git a/src/backend/gsl/parser.y b/src/backend/gsl/parser.y
-index 033d814a3..0fec18082 100644
+index 033d814a3..1b720f014 100644
 --- a/src/backend/gsl/parser.y
 +++ b/src/backend/gsl/parser.y
 @@ -102,6 +102,9 @@ expr:      NUM       { $$ = $1;                            }
@@ -58,7 +89,7 @@ index 033d814a3..0fec18082 100644
  | expr '+' expr      { $$ = $1 + $3;                       }
  | expr '-' expr      { $$ = $1 - $3;                       }
  | expr '*' expr      { $$ = $1 * $3;                       }
-@@ -298,6 +298,7 @@ double parse(const char* string, const char* locale) {
+@@ -298,6 +301,7 @@ double parse(const char* string, const char* locale) {
  
  	/* parameter for yylex */
  	res = NAN;	/* default value */
@@ -66,6 +97,90 @@ index 033d814a3..0fec18082 100644
  	yyparse(&p);
  
  	pdebug("PARSER: parse() DONE (result = %g, errors = %d)\n*******************************\n", res, parse_errors());
+diff --git a/src/backend/worksheet/plots/cartesian/Axis.cpp b/src/backend/worksheet/plots/cartesian/Axis.cpp
+index 7dacc7e9f..f378546b8 100644
+--- a/src/backend/worksheet/plots/cartesian/Axis.cpp
++++ b/src/backend/worksheet/plots/cartesian/Axis.cpp
+@@ -1504,32 +1504,56 @@ void AxisPrivate::retransformTickLabelStrings() {
+ 		} else if (labelsFormat == Axis::LabelsFormat::ScientificE) {
+ 			QString nullStr = numberLocale.toString(0., 'e', labelsPrecision);
+ 			for (const auto value : tickLabelValues) {
+-				str = numberLocale.toString(value, 'e', labelsPrecision);
++				if (value == 0)	// just show "0"
++					str = numberLocale.toString(value, 'f', 0);
++				else
++					str = numberLocale.toString(value, 'e', labelsPrecision);
+ 				if (str == "-" + nullStr) str = nullStr;
+ 				str = labelsPrefix + str + labelsSuffix;
+ 				tickLabelStrings << str;
+ 			}
+ 		} else if (labelsFormat == Axis::LabelsFormat::Powers10) {
+ 			for (const auto value : tickLabelValues) {
+-				str = "10<sup>" + numberLocale.toString(log10(value), 'f', labelsPrecision) + "</sup>";
++				if (value == 0)	// just show "0"
++					str = numberLocale.toString(value, 'f', 0);
++				else {
++					str = "10<sup>" + numberLocale.toString(log10(qAbs(value)), 'f', labelsPrecision) + "</sup>";
++					if (value < 0)
++						str.prepend("-");
++				}
+ 				str = labelsPrefix + str + labelsSuffix;
+ 				tickLabelStrings << str;
+ 			}
+ 		} else if (labelsFormat == Axis::LabelsFormat::Powers2) {
+ 			for (const auto value : tickLabelValues) {
+-				str = "2<span style=\"vertical-align:super\">" + numberLocale.toString(log2(value), 'f', labelsPrecision) + "</span>";
++				if (value == 0)	// just show "0"
++					str = numberLocale.toString(value, 'f', 0);
++				else  {
++					str = "2<span style=\"vertical-align:super\">" + numberLocale.toString(log2(qAbs(value)), 'f', labelsPrecision) + "</span>";
++					if (value < 0)
++						str.prepend("-");
++				}
+ 				str = labelsPrefix + str + labelsSuffix;
+ 				tickLabelStrings << str;
+ 			}
+ 		} else if (labelsFormat == Axis::LabelsFormat::PowersE) {
+ 			for (const auto value : tickLabelValues) {
+-				str = "e<span style=\"vertical-align:super\">" + numberLocale.toString(log(value), 'f', labelsPrecision) + "</span>";
++				if (value == 0)	// just show "0"
++					str = numberLocale.toString(value, 'f', 0);
++				else {
++					str = "e<span style=\"vertical-align:super\">" + numberLocale.toString(log(qAbs(value)), 'f', labelsPrecision) + "</span>";
++					if (value < 0)
++						str.prepend("-");
++				}
+ 				str = labelsPrefix + str + labelsSuffix;
+ 				tickLabelStrings << str;
+ 			}
+ 		} else if (labelsFormat == Axis::LabelsFormat::MultipliesPi) {
+ 			for (const auto value : tickLabelValues) {
+-				str = "<span>" + numberLocale.toString(value / M_PI, 'f', labelsPrecision) + "</span>" + QChar(0x03C0);
++				if (value == 0)	// just show "0"
++					str = numberLocale.toString(value, 'f', 0);
++				else
++					str = "<span>" + numberLocale.toString(value / M_PI, 'f', labelsPrecision) + "</span>" + QChar(0x03C0);
+ 				str = labelsPrefix + str + labelsSuffix;
+ 				tickLabelStrings << str;
+ 			}
+@@ -1566,7 +1590,7 @@ int AxisPrivate::upperLabelsPrecision(int precision) {
+ 	//if there are duplicates, increase the precision.
+ 	QVector<double> tempValues;
+ 	for (const auto value : tickLabelValues)
+-		tempValues.append( nsl_math_round_places(value, precision) );
++		tempValues.append( nsl_math_round_precision(value, precision) );
+ 
+ 	for (int i = 0; i < tempValues.size(); ++i) {
+ 		for (int j = 0; j < tempValues.size(); ++j) {
+@@ -1594,7 +1618,7 @@ int AxisPrivate::lowerLabelsPrecision(int precision) {
+ 	//if there are duplicates, decrease the precision.
+ 	QVector<double> tempValues;
+ 	for (auto value : tickLabelValues)
+-		tempValues.append( nsl_math_round_places(value, precision-1) );
++		tempValues.append( nsl_math_round_precision(value, precision-1) );
+ 
+ 	//check whether we have duplicates with reduced precision
+ 	//-> current precision cannot be reduced, return the current value
 diff --git a/src/kdefrontend/dockwidgets/XYFitCurveDock.cpp b/src/kdefrontend/dockwidgets/XYFitCurveDock.cpp
 index 3c28f9e4c..625d35fc4 100644
 --- a/src/kdefrontend/dockwidgets/XYFitCurveDock.cpp
