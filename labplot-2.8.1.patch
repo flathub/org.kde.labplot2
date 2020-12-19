@@ -72,7 +72,7 @@ index 033d814a3..1b720f014 100644
  
  	pdebug("PARSER: parse() DONE (result = %g, errors = %d)\n*******************************\n", res, parse_errors());
 diff --git a/src/backend/worksheet/plots/cartesian/Axis.cpp b/src/backend/worksheet/plots/cartesian/Axis.cpp
-index 7dacc7e9f..3ba411586 100644
+index 7dacc7e9f..b61b63fbe 100644
 --- a/src/backend/worksheet/plots/cartesian/Axis.cpp
 +++ b/src/backend/worksheet/plots/cartesian/Axis.cpp
 @@ -1445,13 +1445,13 @@ void AxisPrivate::retransformTickLabelStrings() {
@@ -164,7 +164,7 @@ index 7dacc7e9f..3ba411586 100644
  
  	// avoid problems with zero range axis
  	if (tickLabelValues.isEmpty() || qFuzzyCompare(tickLabelValues.constFirst(), tickLabelValues.constLast())) {
-@@ -1565,8 +1589,29 @@ int AxisPrivate::upperLabelsPrecision(int precision) {
+@@ -1565,8 +1589,28 @@ int AxisPrivate::upperLabelsPrecision(int precision) {
  	//round float to the current precision and look for duplicates.
  	//if there are duplicates, increase the precision.
  	QVector<double> tempValues;
@@ -195,7 +195,7 @@ index 7dacc7e9f..3ba411586 100644
  
  	for (int i = 0; i < tempValues.size(); ++i) {
  		for (int j = 0; j < tempValues.size(); ++j) {
-@@ -1575,7 +1620,7 @@ int AxisPrivate::upperLabelsPrecision(int precision) {
+@@ -1575,7 +1619,7 @@ int AxisPrivate::upperLabelsPrecision(int precision) {
  
  			//duplicate for the current precision found, increase the precision and check again
  			if (tempValues.at(i) == tempValues.at(j))
@@ -204,10 +204,11 @@ index 7dacc7e9f..3ba411586 100644
  		}
  	}
  
-@@ -1589,12 +1634,35 @@ int AxisPrivate::upperLabelsPrecision(int precision) {
+@@ -1588,13 +1632,34 @@ int AxisPrivate::upperLabelsPrecision(int precision) {
+ 	returns highest lower limit for the precision
  	where no duplicates for the tick label float occur.
  */
- int AxisPrivate::lowerLabelsPrecision(int precision) {
+-int AxisPrivate::lowerLabelsPrecision(int precision) {
 -// 	DEBUG("AxisPrivate::lowerLabelsPrecision() precision =" << precision);
 -	//round float to the current precision and look for duplicates.
 +int AxisPrivate::lowerLabelsPrecision(const int precision, const Axis::LabelsFormat format) {
@@ -243,7 +244,7 @@ index 7dacc7e9f..3ba411586 100644
  
  	//check whether we have duplicates with reduced precision
  	//-> current precision cannot be reduced, return the current value
-@@ -1622,7 +1690,7 @@ int AxisPrivate::lowerLabelsPrecision(int precision) {
+@@ -1622,7 +1687,7 @@ int AxisPrivate::lowerLabelsPrecision(int precision) {
  			return 0;
  	} else {
  		//no duplicates found, reduce further, and check again
