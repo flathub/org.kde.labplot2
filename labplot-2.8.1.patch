@@ -177,7 +177,6 @@ index 7dacc7e9f..3ba411586 100644
 +			tempValues.append( nsl_math_round_places(value, precision) );
 +		break;
 +	case Axis::LabelsFormat::ScientificE:
-+	case Axis::LabelsFormat::Scientific:
 +		for (const auto value : tickLabelValues)
 +			tempValues.append( nsl_math_round_precision(value, precision) );
 +		break;
@@ -225,7 +224,6 @@ index 7dacc7e9f..3ba411586 100644
 +			tempValues.append( nsl_math_round_places(value, precision-1) );
 +		break;
 +	case Axis::LabelsFormat::ScientificE:
-+	case Axis::LabelsFormat::Scientific:
 +		for (auto value : tickLabelValues)
 +			tempValues.append( nsl_math_round_precision(value, precision-1) );
 +		break;
