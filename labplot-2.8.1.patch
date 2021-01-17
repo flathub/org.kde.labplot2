@@ -1,8 +1,8 @@
 diff --git a/ChangeLog b/ChangeLog
-index 9b501c1c2..ea33fabd5 100644
+index 9b501c1c2..c3cc61cf9 100644
 --- a/ChangeLog
 +++ b/ChangeLog
-@@ -1,3 +1,12 @@
+@@ -1,3 +1,13 @@
 +-----2.9.0 -----
 +-----2.8.2 -----
 +Bug fixes:
@@ -12,6 +12,7 @@ index 9b501c1c2..ea33fabd5 100644
 +	* BUG 427190 - Fixed resetting parser error count on some platforms (Debian, Manjaro)
 +	* BUG 429110 - Support semicolon as function argument separator for locale with comma as decimal separator
 +	* BUG 429368 - Fix validation of custom model equation in fit dock
++	* BUG 431535 - Save/Load value format
  -----2.8.1 -----
  	* [worksheet] allow to change the background color for axis labels (default: transparent)
  	* [worksheet] allow to copy the plot cursor cordinates
@@ -268,6 +269,74 @@ index 67500ec65..02898068c 100644
  	bool transformAnchor(QPointF*);
  
  	QPainterPath arrowPath;
+diff --git a/src/backend/worksheet/plots/cartesian/CartesianPlot.cpp b/src/backend/worksheet/plots/cartesian/CartesianPlot.cpp
+index df0bfea71..0bb2c01d0 100644
+--- a/src/backend/worksheet/plots/cartesian/CartesianPlot.cpp
++++ b/src/backend/worksheet/plots/cartesian/CartesianPlot.cpp
+@@ -1723,7 +1723,7 @@ void CartesianPlot::yDataChanged() {
+ 		auto* curve = dynamic_cast<XYCurve*>(QObject::sender());
+ 		if (curve) {
+ 			const AbstractColumn* col = curve->yColumn();
+-			if (col->columnMode() == AbstractColumn::ColumnMode::DateTime && d->xRangeFormat != RangeFormat::DateTime) {
++			if (col->columnMode() == AbstractColumn::ColumnMode::DateTime && d->yRangeFormat != RangeFormat::DateTime) {
+ 				setUndoAware(false);
+ 				setYRangeFormat(RangeFormat::DateTime);
+ 				setUndoAware(true);
+diff --git a/src/backend/worksheet/plots/cartesian/XYCurve.cpp b/src/backend/worksheet/plots/cartesian/XYCurve.cpp
+index 1df93ac36..fdf31b1af 100644
+--- a/src/backend/worksheet/plots/cartesian/XYCurve.cpp
++++ b/src/backend/worksheet/plots/cartesian/XYCurve.cpp
+@@ -3036,7 +3036,9 @@ void XYCurve::save(QXmlStreamWriter* writer) const {
+ 	writer->writeAttribute( "distance", QString::number(d->valuesDistance) );
+ 	writer->writeAttribute( "rotation", QString::number(d->valuesRotationAngle) );
+ 	writer->writeAttribute( "opacity", QString::number(d->valuesOpacity) );
+-	//TODO values format and precision
++	writer->writeAttribute("numericFormat", QString(d->valuesNumericFormat));
++	writer->writeAttribute("dateTimeFormat", d->valuesDateTimeFormat);
++	writer->writeAttribute( "precision", QString::number(d->valuesPrecision) );
+ 	writer->writeAttribute( "prefix", d->valuesPrefix );
+ 	writer->writeAttribute( "suffix", d->valuesSuffix );
+ 	WRITE_QCOLOR(d->valuesColor);
+@@ -3145,6 +3147,15 @@ bool XYCurve::load(XmlStreamReader* reader, bool preview) {
+ 			READ_DOUBLE_VALUE("rotation", valuesRotationAngle);
+ 			READ_DOUBLE_VALUE("opacity", valuesOpacity);
+ 
++			str = attribs.value("numericFormat").toString();
++			if (str.isEmpty())
++				reader->raiseWarning(attributeWarning.subs("numericFormat").toString());
++			else
++				d->valuesNumericFormat = *(str.toLatin1().data());
++
++			READ_STRING_VALUE("dateTimeFormat", valuesDateTimeFormat);
++			READ_INT_VALUE("precision", valuesPrecision, int);
++
+ 			//don't produce any warning if no prefix or suffix is set (empty string is allowed here in xml)
+ 			d->valuesPrefix = attribs.value("prefix").toString();
+ 			d->valuesSuffix = attribs.value("suffix").toString();
+diff --git a/src/kdefrontend/dockwidgets/XYCurveDock.cpp b/src/kdefrontend/dockwidgets/XYCurveDock.cpp
+index 566fcb429..be455512f 100644
+--- a/src/kdefrontend/dockwidgets/XYCurveDock.cpp
++++ b/src/kdefrontend/dockwidgets/XYCurveDock.cpp
+@@ -155,8 +155,8 @@ XYCurveDock::XYCurveDock(QWidget* parent) : BaseDock(parent) {
+ 	connect(ui.cbValuesNumericFormat, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &XYCurveDock::valuesNumericFormatChanged);
+ 	connect(ui.sbValuesPrecision, QOverload<int>::of(&QSpinBox::valueChanged), this, &XYCurveDock::valuesPrecisionChanged);
+ 	connect(ui.cbValuesDateTimeFormat, &QComboBox::currentTextChanged, this, &XYCurveDock::valuesDateTimeFormatChanged);
+-	connect( ui.leValuesPrefix, SIGNAL(returnPressed()), this, SLOT(valuesPrefixChanged()) );
+-	connect( ui.leValuesSuffix, SIGNAL(returnPressed()), this, SLOT(valuesSuffixChanged()) );
++	connect(ui.leValuesPrefix, &QLineEdit::textChanged, this, &XYCurveDock::valuesPrefixChanged);
++	connect(ui.leValuesSuffix, &QLineEdit::textChanged, this, &XYCurveDock::valuesSuffixChanged);
+ 	connect( ui.kfrValuesFont, SIGNAL(fontSelected(QFont)), this, SLOT(valuesFontChanged(QFont)) );
+ 	connect( ui.kcbValuesColor, SIGNAL(changed(QColor)), this, SLOT(valuesColorChanged(QColor)) );
+ 
+@@ -167,7 +167,7 @@ XYCurveDock::XYCurveDock(QWidget* parent) : BaseDock(parent) {
+ 	connect( ui.cbFillingImageStyle, SIGNAL(currentIndexChanged(int)), this, SLOT(fillingImageStyleChanged(int)) );
+ 	connect( ui.cbFillingBrushStyle, SIGNAL(currentIndexChanged(int)), this, SLOT(fillingBrushStyleChanged(int)) );
+ 	connect(ui.bFillingOpen, SIGNAL(clicked(bool)), this, SLOT(selectFile()));
+-	connect( ui.leFillingFileName, SIGNAL(returnPressed()), this, SLOT(fileNameChanged()) );
++	connect(ui.leFillingFileName, &QLineEdit::textChanged, this, &XYCurveDock::fileNameChanged);
+ 	connect( ui.leFillingFileName, SIGNAL(textChanged(QString)), this, SLOT(fileNameChanged()) );
+ 	connect( ui.kcbFillingFirstColor, SIGNAL(changed(QColor)), this, SLOT(fillingFirstColorChanged(QColor)) );
+ 	connect( ui.kcbFillingSecondColor, SIGNAL(changed(QColor)), this, SLOT(fillingSecondColorChanged(QColor)) );
 diff --git a/src/kdefrontend/dockwidgets/XYFitCurveDock.cpp b/src/kdefrontend/dockwidgets/XYFitCurveDock.cpp
 index 3c28f9e4c..625d35fc4 100644
 --- a/src/kdefrontend/dockwidgets/XYFitCurveDock.cpp
