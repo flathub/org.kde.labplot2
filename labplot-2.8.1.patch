@@ -50,6 +50,45 @@ index a3c9a2db9..1f240ce62 100644
  		parsePythonValues();
  	else if (m_backendName.compare(QStringLiteral("Sage"), Qt::CaseInsensitive) == 0)
  		parsePythonValues();
+diff --git a/src/backend/datasources/filters/AbstractFileFilter.cpp b/src/backend/datasources/filters/AbstractFileFilter.cpp
+index 2d20d9c4d..20d506f79 100644
+--- a/src/backend/datasources/filters/AbstractFileFilter.cpp
++++ b/src/backend/datasources/filters/AbstractFileFilter.cpp
+@@ -159,24 +159,33 @@ AbstractFileFilter::FileType AbstractFileFilter::fileType(const QString& fileNam
+ 			fileType = FileType::NgspiceRawAscii;
+ 		else //probably ascii data
+ 			fileType = FileType::Ascii;
+-	} else if (fileInfo.contains(QLatin1String("Hierarchical Data Format"))
++	}
++#ifdef HAVE_HDF5
++	else if (fileInfo.contains(QLatin1String("Hierarchical Data Format"))
+ 		|| fileName.endsWith(QLatin1String("h5"), Qt::CaseInsensitive)
+ 		|| fileName.endsWith(QLatin1String("hdf"), Qt::CaseInsensitive)
+ 		|| fileName.endsWith(QLatin1String("hdf5"), Qt::CaseInsensitive) )
+ 		fileType = FileType::HDF5;
++#endif
++#ifdef HAVE_NETCDF
+ 	else if (fileInfo.contains(QLatin1String("NetCDF Data Format"))
+ 		|| fileName.endsWith(QLatin1String("nc"), Qt::CaseInsensitive)
+ 		|| fileName.endsWith(QLatin1String("netcdf"), Qt::CaseInsensitive)
+ 		|| fileName.endsWith(QLatin1String("cdf"), Qt::CaseInsensitive))
+ 		fileType = FileType::NETCDF;
++#endif
++#ifdef HAVE_FITS
+ 	else if (fileInfo.contains(QLatin1String("FITS image data"))
+ 		|| fileName.endsWith(QLatin1String("fits"), Qt::CaseInsensitive)
+ 		|| fileName.endsWith(QLatin1String("fit"), Qt::CaseInsensitive)
+ 		|| fileName.endsWith(QLatin1String("fts"), Qt::CaseInsensitive))
+ 		fileType = FileType::FITS;
++#endif
++#ifdef HAVE_ZIP
+ 	else if (fileInfo.contains(QLatin1String("ROOT")) //can be "ROOT Data Format" or "ROOT file Version ??? (Compression: 1)"
+ 		||  fileName.endsWith(QLatin1String("root"), Qt::CaseInsensitive)) // TODO find out file description
+ 		fileType = FileType::ROOT;
++#endif
+ 	else if (fileInfo.contains("image") || fileInfo.contains("bitmap") || !imageFormat.isEmpty())
+ 		fileType = FileType::Image;
+ 	else if (NgspiceRawBinaryFilter::isNgspiceBinaryFile(fileName))
 diff --git a/src/backend/gsl/parser.y b/src/backend/gsl/parser.y
 index 033d814a3..1b720f014 100644
 --- a/src/backend/gsl/parser.y
@@ -270,10 +309,27 @@ index 67500ec65..02898068c 100644
  
  	QPainterPath arrowPath;
 diff --git a/src/backend/worksheet/plots/cartesian/CartesianPlot.cpp b/src/backend/worksheet/plots/cartesian/CartesianPlot.cpp
-index df0bfea71..0bb2c01d0 100644
+index df0bfea71..eebc0c3f5 100644
 --- a/src/backend/worksheet/plots/cartesian/CartesianPlot.cpp
 +++ b/src/backend/worksheet/plots/cartesian/CartesianPlot.cpp
-@@ -1723,7 +1723,7 @@ void CartesianPlot::yDataChanged() {
+@@ -1463,7 +1463,7 @@ void CartesianPlot::childAdded(const AbstractAspect* child) {
+ 		connect(curve, &XYCurve::yErrorTypeChanged, this, &CartesianPlot::dataChanged);
+ 		connect(curve, &XYCurve::yErrorPlusColumnChanged, this, &CartesianPlot::dataChanged);
+ 		connect(curve, &XYCurve::yErrorMinusColumnChanged, this, &CartesianPlot::dataChanged);
+-		connect(curve, static_cast<void (XYCurve::*)(bool)>(&XYCurve::visibilityChanged),
++		connect(curve, QOverload<bool>::of(&XYCurve::visibilityChanged),
+ 				this, &CartesianPlot::curveVisibilityChanged);
+ 
+ 		//update the legend on changes of the name, line and symbol styles
+@@ -1479,6 +1479,7 @@ void CartesianPlot::childAdded(const AbstractAspect* child) {
+ 		connect(curve, &XYCurve::symbolsOpacityChanged, this, &CartesianPlot::updateLegend);
+ 		connect(curve, &XYCurve::symbolsBrushChanged, this, &CartesianPlot::updateLegend);
+ 		connect(curve, &XYCurve::symbolsPenChanged, this, &CartesianPlot::updateLegend);
++		connect(curve, &XYCurve::linePenChanged, this, QOverload<QPen>::of(&CartesianPlot::curveLinePenChanged)); // forward to Worksheet to update CursorDock
+ 
+ 		updateLegend();
+ 		d->curvesXMinMaxIsDirty = true;
+@@ -1723,7 +1724,7 @@ void CartesianPlot::yDataChanged() {
  		auto* curve = dynamic_cast<XYCurve*>(QObject::sender());
  		if (curve) {
  			const AbstractColumn* col = curve->yColumn();
@@ -282,10 +338,123 @@ index df0bfea71..0bb2c01d0 100644
  				setUndoAware(false);
  				setYRangeFormat(RangeFormat::DateTime);
  				setUndoAware(true);
+diff --git a/src/backend/worksheet/plots/cartesian/CartesianPlot.h b/src/backend/worksheet/plots/cartesian/CartesianPlot.h
+index ae98f867a..52df584a3 100644
+--- a/src/backend/worksheet/plots/cartesian/CartesianPlot.h
++++ b/src/backend/worksheet/plots/cartesian/CartesianPlot.h
+@@ -281,7 +281,6 @@ public slots:
+ 	void cursor();
+ 
+ 	void dataChanged();
+-	void curveLinePenChanged(QPen);
+ 
+ private slots:
+ 	void updateLegend();
+@@ -291,6 +290,7 @@ private slots:
+ 
+ 	void xDataChanged();
+ 	void yDataChanged();
++	void curveLinePenChanged(QPen);
+ 	void curveVisibilityChanged();
+ 
+ 	//SLOTs for changes triggered via QActions in the context menu
+diff --git a/src/backend/worksheet/plots/cartesian/ReferenceLine.cpp b/src/backend/worksheet/plots/cartesian/ReferenceLine.cpp
+index d325f986b..e5ed56022 100644
+--- a/src/backend/worksheet/plots/cartesian/ReferenceLine.cpp
++++ b/src/backend/worksheet/plots/cartesian/ReferenceLine.cpp
+@@ -96,7 +96,7 @@ void ReferenceLine::initActions() {
+ 	connect(visibilityAction, &QAction::triggered, this, &ReferenceLine::visibilityChangedSlot);
+ 
+ 	//Orientation
+-	orientationActionGroup = new QActionGroup(this);
++	auto* orientationActionGroup = new QActionGroup(this);
+ 	orientationActionGroup->setExclusive(true);
+ 	connect(orientationActionGroup, &QActionGroup::triggered, this, &ReferenceLine::orientationChangedSlot);
+ 
+diff --git a/src/backend/worksheet/plots/cartesian/ReferenceLine.h b/src/backend/worksheet/plots/cartesian/ReferenceLine.h
+index c45eb1ce2..9a5668c82 100644
+--- a/src/backend/worksheet/plots/cartesian/ReferenceLine.h
++++ b/src/backend/worksheet/plots/cartesian/ReferenceLine.h
+@@ -78,7 +78,6 @@ private:
+ 	QAction* orientationHorizontalAction{nullptr};
+ 	QAction* orientationVerticalAction{nullptr};
+ 
+-	QActionGroup* orientationActionGroup{nullptr};
+ 	QActionGroup* lineStyleActionGroup{nullptr};
+ 	QActionGroup* lineColorActionGroup{nullptr};
+ 
 diff --git a/src/backend/worksheet/plots/cartesian/XYCurve.cpp b/src/backend/worksheet/plots/cartesian/XYCurve.cpp
-index 1df93ac36..fdf31b1af 100644
+index 1df93ac36..0f8d39a4a 100644
 --- a/src/backend/worksheet/plots/cartesian/XYCurve.cpp
 +++ b/src/backend/worksheet/plots/cartesian/XYCurve.cpp
+@@ -1498,6 +1498,10 @@ void XYCurvePrivate::updateLines() {
+ 						lastPoint.setX(NAN);
+ 						m_lines.append(QLineF(lastPoint, p1));
+ 					}
++					if (!isnan(lastPoint.x()))	// last line
++						m_lines.append(QLineF(m_logicalPoints[endIndex-1], m_logicalPoints[endIndex]));
++
++					break;
+ 				}
+ 			}
+ 			if (!isnan(lastPoint.x()))	// last line
+@@ -1624,11 +1628,11 @@ void XYCurvePrivate::updateLines() {
+ #ifdef PERFTRACE_CURVES
+ 	PERFTRACE(name().toLatin1() + ", XYCurvePrivate::updateLines(), calculate new line path");
+ #endif
+-	//new line path
+-	for (const auto& line : qAsConst(m_lines)) {
+-		linePath.moveTo(line.p1());
+-		linePath.lineTo(line.p2());
+-	}
++		//new line path
++		for (const auto& line : qAsConst(m_lines)) {
++			linePath.moveTo(line.p1());
++			linePath.lineTo(line.p2());
++		}
+ 	}
+ 
+ 	updateFilling();
+@@ -2724,9 +2728,8 @@ void XYCurvePrivate::draw(QPainter* painter) {
+ 	//draw values
+ 	if (valuesType != XYCurve::ValuesType::NoValues) {
+ 		painter->setOpacity(valuesOpacity);
+-		//don't use any painter pen, since this will force QPainter to render the text outline which is expensive
+-		painter->setPen(Qt::NoPen);
+-		painter->setBrush(valuesColor);
++		painter->setPen(QPen(valuesColor));
++		painter->setFont(valuesFont);
+ 		drawValues(painter);
+ 	}
+ }
+@@ -2834,20 +2837,17 @@ void XYCurvePrivate::drawSymbols(QPainter* painter) {
+ }
+ 
+ void XYCurvePrivate::drawValues(QPainter* painter) {
+-	QTransform trafo;
+-	QPainterPath path;
+-
+ 	int i = 0;
+ 	for (const auto& point : qAsConst(m_valuePoints)) {
+-		path = QPainterPath();
+-		path.addText(QPoint(0, 0), valuesFont, m_valueStrings.at(i++));
+-
+-		trafo.reset();
+-		trafo.translate(point.x(), point.y());
++		painter->translate(point);
+ 		if (valuesRotationAngle != 0)
+-			trafo.rotate(-valuesRotationAngle);
++			painter->rotate(-valuesRotationAngle);
+ 
+-		painter->drawPath(trafo.map(path));
++		painter->drawText(QPoint(0, 0), m_valueStrings.at(i++));
++
++		if (valuesRotationAngle != 0)
++			painter->rotate(valuesRotationAngle);
++		painter->translate(-point);
+ 	}
+ }
+ 
 @@ -3036,7 +3036,9 @@ void XYCurve::save(QXmlStreamWriter* writer) const {
  	writer->writeAttribute( "distance", QString::number(d->valuesDistance) );
  	writer->writeAttribute( "rotation", QString::number(d->valuesRotationAngle) );
@@ -313,6 +482,382 @@ index 1df93ac36..fdf31b1af 100644
  			//don't produce any warning if no prefix or suffix is set (empty string is allowed here in xml)
  			d->valuesPrefix = attribs.value("prefix").toString();
  			d->valuesSuffix = attribs.value("suffix").toString();
+diff --git a/src/kdefrontend/datasources/ImportProjectDialog.cpp b/src/kdefrontend/datasources/ImportProjectDialog.cpp
+index dc4d766d1..7b000cd33 100644
+--- a/src/kdefrontend/datasources/ImportProjectDialog.cpp
++++ b/src/kdefrontend/datasources/ImportProjectDialog.cpp
+@@ -3,7 +3,7 @@
+     Project              : LabPlot
+     Description          : import project dialog
+     --------------------------------------------------------------------
+-    Copyright            : (C) 2017-2019 Alexander Semke (alexander.semke@web.de)
++    Copyright            : (C) 2017-2021 Alexander Semke (alexander.semke@web.de)
+ 
+  ***************************************************************************/
+ 
+@@ -49,6 +49,7 @@
+ #include <KLocalizedString>
+ #include <KMessageBox>
+ #include <KSharedConfig>
++#include <KUrlComboBox>
+ #include <KWindowConfig>
+ 
+ /*!
+@@ -68,6 +69,13 @@ ImportProjectDialog::ImportProjectDialog(MainWin* parent, ProjectType type) : QD
+ 	QWidget* mainWidget = new QWidget(this);
+ 	ui.setupUi(mainWidget);
+ 	ui.chbUnusedObjects->hide();
++
++	m_cbFileName = new KUrlComboBox(KUrlComboBox::Mode::Files, this);
++	m_cbFileName->setMaxItems(7);
++	auto* l = dynamic_cast<QHBoxLayout*>(ui.gbProject->layout());
++	if (l)
++		l->insertWidget(1, m_cbFileName);
++
+ 	vLayout->addWidget(mainWidget);
+ 
+ 	ui.tvPreview->setAnimated(true);
+@@ -100,7 +108,8 @@ ImportProjectDialog::ImportProjectDialog(MainWin* parent, ProjectType type) : QD
+ 	m_buttonBox->button(QDialogButtonBox::Ok)->setEnabled(false);
+ 
+ 	//Signals/Slots
+-	connect(ui.leFileName, &QLineEdit::textChanged, this, &ImportProjectDialog::fileNameChanged);
++	connect(m_cbFileName, &KUrlComboBox::urlActivated,
++			this, [=](const QUrl &url){fileNameChanged(url.path());});
+ 	connect(ui.bOpen, &QPushButton::clicked, this, &ImportProjectDialog::selectFile);
+ 	connect(m_bNewFolder, &QPushButton::clicked, this, &ImportProjectDialog::newFolder);
+ 	connect(ui.chbUnusedObjects, &QCheckBox::stateChanged, this, &ImportProjectDialog::refreshPreview);
+@@ -127,7 +136,7 @@ ImportProjectDialog::ImportProjectDialog(MainWin* parent, ProjectType type) : QD
+ 
+ 	//"What's this?" texts
+ 	QString info = i18n("Specify the file where the project content has to be imported from.");
+-	ui.leFileName->setWhatsThis(info);
++	m_cbFileName->setWhatsThis(info);
+ 
+ 	info = i18n("Select one or several objects to be imported into the current project.\n"
+ 	            "Note, all children of the selected objects as well as all the dependent objects will be automatically selected.\n"
+@@ -147,18 +156,25 @@ ImportProjectDialog::ImportProjectDialog(MainWin* parent, ProjectType type) : QD
+ 	} else
+ 		resize(QSize(300, 0).expandedTo(minimumSize()));
+ 
+-	QString lastImportedFile;
++	QString file;
++	QString files;
+ 	switch (m_projectType) {
+ 	case ProjectType::LabPlot:
+-		lastImportedFile = QLatin1String("LastImportedLabPlotProject");
++		file = QLatin1String("LastImportedLabPlotProject");
++		files = QLatin1String("LastImportedLabPlotProjects");
+ 		break;
+ 	case ProjectType::Origin:
+-		lastImportedFile = QLatin1String("LastImportedOriginProject");
++		file = QLatin1String("LastImportedOriginProject");
++		files = QLatin1String("LastImportedOriginProjects");
+ 		break;
+ 	}
+ 
+ 	QApplication::processEvents(QEventLoop::AllEvents, 100);
+-	ui.leFileName->setText(conf.readEntry(lastImportedFile, ""));
++	m_cbFileName->setUrl(conf.readEntry(file, ""));
++	QStringList urls = m_cbFileName->urls();
++	urls.append(conf.readXdgListEntry(files));
++	m_cbFileName->setUrls(urls);
++	fileNameChanged(m_cbFileName->currentText());
+ }
+ 
+ ImportProjectDialog::~ImportProjectDialog() {
+@@ -166,17 +182,21 @@ ImportProjectDialog::~ImportProjectDialog() {
+ 	KConfigGroup conf(KSharedConfig::openConfig(), "ImportProjectDialog");
+ 	KWindowConfig::saveWindowSize(windowHandle(), conf);
+ 
+-	QString lastImportedFile;
++	QString file;
++	QString files;
+ 	switch (m_projectType) {
+ 	case ProjectType::LabPlot:
+-		lastImportedFile = QLatin1String("LastImportedLabPlotProject");
++		file = QLatin1String("LastImportedLabPlotProject");
++		files = QLatin1String("LastImportedLabPlotProjects");
+ 		break;
+ 	case ProjectType::Origin:
+-		lastImportedFile = QLatin1String("LastImportedOriginProject");
++		file = QLatin1String("LastImportedOriginProject");
++		files = QLatin1String("LastImportedOriginProjects");
+ 		break;
+ 	}
+ 
+-	conf.writeEntry(lastImportedFile, ui.leFileName->text());
++	conf.writeEntry(file, m_cbFileName->currentText());
++	conf.writeXdgListEntry(files, m_cbFileName->urls());
+ }
+ 
+ void ImportProjectDialog::setCurrentFolder(const Folder* folder) {
+@@ -269,7 +289,7 @@ void ImportProjectDialog::importTo(QStatusBar* statusBar) const {
+  * show the content of the project in the tree view
+  */
+ void ImportProjectDialog::refreshPreview() {
+-	QString project = ui.leFileName->text();
++	const QString& project = m_cbFileName->currentText();
+ 	m_projectParser->setProjectFileName(project);
+ 
+ #ifdef HAVE_LIBORIGIN
+@@ -341,13 +361,13 @@ void ImportProjectDialog::selectionChanged(const QItemSelection& selected, const
+ 	//TODO: we need a better "selection", maybe with tri-state check boxes in the tree view
+ 	const auto* aspect = static_cast<const AbstractAspect*>(indexes.at(0).internalPointer());
+ 	const QVector<AbstractAspect*> aspects = aspect->dependsOn();
++
+ 	const auto* model = reinterpret_cast<AspectTreeModel*>(ui.tvPreview->model());
+ 	for (const auto* aspect : aspects) {
+ 		QModelIndex index = model->modelIndexOfAspect(aspect, 0);
+ 		ui.tvPreview->selectionModel()->select(index, QItemSelectionModel::Select | QItemSelectionModel::Rows);
+ 	}
+ 
+-
+ 	//Ok-button is only enabled if some project objects were selected
+ 	bool enable = (selected.indexes().size() != 0);
+ 	m_buttonBox->button(QDialogButtonBox::Ok)->setEnabled(enable);
+@@ -394,7 +414,12 @@ void ImportProjectDialog::selectFile() {
+ 			conf.writeEntry(lastDirConfEntryName, newDir);
+ 	}
+ 
+-	ui.leFileName->setText(path);
++	QStringList urls = m_cbFileName->urls();
++	urls.insert(0, QUrl::fromLocalFile(path).url());
++	m_cbFileName->setUrls(urls);
++	m_cbFileName->setCurrentText(urls.first());
++	fileNameChanged(path); // why do I have to call this function separately
++
+ 	refreshPreview();
+ }
+ 
+@@ -410,8 +435,6 @@ void ImportProjectDialog::fileNameChanged(const QString& name) {
+ 		fileName = QDir::homePath() + QLatin1String("/") + fileName;
+ 
+ 	bool fileExists = QFile::exists(fileName);
+-	GuiTools::highlight(ui.leFileName, !fileExists);
+-
+ 	if (!fileExists) {
+ 		//file doesn't exist -> delete the content preview that is still potentially
+ 		//available from the previously selected file
+@@ -424,7 +447,7 @@ void ImportProjectDialog::fileNameChanged(const QString& name) {
+ }
+ 
+ void ImportProjectDialog::newFolder() {
+-	QString path = ui.leFileName->text();
++	const QString& path = m_cbFileName->currentText();
+ 	QString name = path.right( path.length() - path.lastIndexOf(QLatin1String("/"))-1 );
+ 
+ 	bool ok;
+diff --git a/src/kdefrontend/datasources/ImportProjectDialog.h b/src/kdefrontend/datasources/ImportProjectDialog.h
+index 48ca5ff07..95dd9bbd9 100644
+--- a/src/kdefrontend/datasources/ImportProjectDialog.h
++++ b/src/kdefrontend/datasources/ImportProjectDialog.h
+@@ -3,7 +3,7 @@
+     Project              : LabPlot
+     Description          : import project dialog
+     --------------------------------------------------------------------
+-    Copyright            : (C) 2017-2019 Alexander Semke (alexander.semke@web.de)
++    Copyright            : (C) 2017-2021 Alexander Semke (alexander.semke@web.de)
+ 
+  ***************************************************************************/
+ 
+@@ -40,6 +40,7 @@ class TreeViewComboBox;
+ class MainWin;
+ class QDialogButtonBox;
+ class QStatusBar;
++class KUrlComboBox;
+ 
+ class ImportProjectDialog : public QDialog {
+ 	Q_OBJECT
+@@ -56,6 +57,7 @@ public:
+ private:
+ 	Ui::ImportProjectWidget ui;
+ 	MainWin* m_mainWin;
++	KUrlComboBox* m_cbFileName;
+ 	ProjectParser* m_projectParser{nullptr};
+ 	ProjectType m_projectType;
+ 	AspectTreeModel* m_aspectTreeModel;
+diff --git a/src/kdefrontend/dockwidgets/AxisDock.cpp b/src/kdefrontend/dockwidgets/AxisDock.cpp
+index aeb2bc75d..c50d13d14 100644
+--- a/src/kdefrontend/dockwidgets/AxisDock.cpp
++++ b/src/kdefrontend/dockwidgets/AxisDock.cpp
+@@ -1654,13 +1654,11 @@ void AxisDock::axisDescriptionChanged(const AbstractAspect* aspect) {
+ 	if (m_axis != aspect)
+ 		return;
+ 
+-	m_initializing = true;
+-	if (aspect->name() != ui.leName->text()) {
++	const Lock lock(m_initializing);
++	if (aspect->name() != ui.leName->text())
+ 		ui.leName->setText(aspect->name());
+-	} else if (aspect->comment() != ui.leComment->text()) {
++	else if (aspect->comment() != ui.leComment->text())
+ 		ui.leComment->setText(aspect->comment());
+-	}
+-	m_initializing = false;
+ }
+ 
+ void AxisDock::axisOrientationChanged(Axis::Orientation orientation) {
+diff --git a/src/kdefrontend/dockwidgets/CartesianPlotDock.cpp b/src/kdefrontend/dockwidgets/CartesianPlotDock.cpp
+index 1448796b7..2f97283ac 100644
+--- a/src/kdefrontend/dockwidgets/CartesianPlotDock.cpp
++++ b/src/kdefrontend/dockwidgets/CartesianPlotDock.cpp
+@@ -116,18 +116,7 @@ CartesianPlotDock::CartesianPlotDock(QWidget* parent) : BaseDock(parent) {
+ 	ui.leYBreakEnd->setValidator( new QDoubleValidator(ui.leYBreakEnd) );
+ 
+ 	//set the current locale
+-	SET_NUMBER_LOCALE
+-	ui.sbLeft->setLocale(numberLocale);
+-	ui.sbTop->setLocale(numberLocale);
+-	ui.sbWidth->setLocale(numberLocale);
+-	ui.sbHeight->setLocale(numberLocale);
+-	ui.sbBorderWidth->setLocale(numberLocale);
+-	ui.sbBorderCornerRadius->setLocale(numberLocale);
+-	ui.sbPaddingHorizontal->setLocale(numberLocale);
+-	ui.sbPaddingVertical->setLocale(numberLocale);
+-	ui.sbPaddingRight->setLocale(numberLocale);
+-	ui.sbPaddingBottom->setLocale(numberLocale);
+-	labelWidget->updateLocale();
++	updateLocale();
+ 
+ 	//SIGNAL/SLOT
+ 	//General
+@@ -407,13 +396,15 @@ void CartesianPlotDock::updateLocale() {
+ 	ui.sbPaddingBottom->setLocale(numberLocale);
+ 
+ 	//update the QLineEdits, avoid the change events
+-	Lock lock(m_initializing);
+-	ui.leRangeFirst->setText(numberLocale.toString(m_plot->rangeFirstValues()));
+-	ui.leRangeLast->setText(numberLocale.toString(m_plot->rangeLastValues()));
+-	ui.leXMin->setText(numberLocale.toString(m_plot->xMin()));
+-	ui.leXMax->setText(numberLocale.toString(m_plot->xMax()));
+-	ui.leYMin->setText(numberLocale.toString(m_plot->yMin()));
+-	ui.leYMax->setText(numberLocale.toString(m_plot->yMax()));
++	if (m_plot) {
++		Lock lock(m_initializing);
++		ui.leRangeFirst->setText(numberLocale.toString(m_plot->rangeFirstValues()));
++		ui.leRangeLast->setText(numberLocale.toString(m_plot->rangeLastValues()));
++		ui.leXMin->setText(numberLocale.toString(m_plot->xMin()));
++		ui.leXMax->setText(numberLocale.toString(m_plot->xMax()));
++		ui.leYMin->setText(numberLocale.toString(m_plot->yMin()));
++		ui.leYMax->setText(numberLocale.toString(m_plot->yMax()));
++	}
+ 
+ 	//update the title label
+ 	labelWidget->updateLocale();
+diff --git a/src/kdefrontend/dockwidgets/HistogramDock.cpp b/src/kdefrontend/dockwidgets/HistogramDock.cpp
+index 18b2ed731..97cb56384 100644
+--- a/src/kdefrontend/dockwidgets/HistogramDock.cpp
++++ b/src/kdefrontend/dockwidgets/HistogramDock.cpp
+@@ -4,7 +4,7 @@
+     Description          : widget for Histogram properties
+     --------------------------------------------------------------------
+     Copyright            : (C) 2016 Anu Mittal (anu22mittal@gmail.com)
+-    Copyright            : (C) 2018 by Alexander Semke (alexander.semke@web.de)
++    Copyright            : (C) 2018-2021 by Alexander Semke (alexander.semke@web.de)
+ 
+  ***************************************************************************/
+ 
+@@ -160,8 +160,8 @@ HistogramDock::HistogramDock(QWidget* parent) : BaseDock(parent), cbDataColumn(n
+ 	connect(ui.cbValuesNumericFormat, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &HistogramDock::valuesNumericFormatChanged);
+ 	connect(ui.sbValuesPrecision, QOverload<int>::of(&QSpinBox::valueChanged), this, &HistogramDock::valuesPrecisionChanged);
+ 	connect(ui.cbValuesDateTimeFormat, &QComboBox::currentTextChanged, this, &HistogramDock::valuesDateTimeFormatChanged);
+-	connect( ui.leValuesPrefix, SIGNAL(returnPressed()), this, SLOT(valuesPrefixChanged()) );
+-	connect( ui.leValuesSuffix, SIGNAL(returnPressed()), this, SLOT(valuesSuffixChanged()) );
++	connect(ui.leValuesPrefix, &QLineEdit::textChanged, this, &HistogramDock::valuesPrefixChanged);
++	connect(ui.leValuesSuffix, &QLineEdit::textChanged, this, &HistogramDock::valuesSuffixChanged);
+ 	connect( ui.kfrValuesFont, SIGNAL(fontSelected(QFont)), this, SLOT(valuesFontChanged(QFont)) );
+ 	connect( ui.kcbValuesColor, SIGNAL(changed(QColor)), this, SLOT(valuesColorChanged(QColor)) );
+ 
+@@ -172,7 +172,7 @@ HistogramDock::HistogramDock(QWidget* parent) : BaseDock(parent), cbDataColumn(n
+ 	connect( ui.cbFillingImageStyle, SIGNAL(currentIndexChanged(int)), this, SLOT(fillingImageStyleChanged(int)) );
+ 	connect( ui.cbFillingBrushStyle, SIGNAL(currentIndexChanged(int)), this, SLOT(fillingBrushStyleChanged(int)) );
+ 	connect( ui.bFillingOpen, SIGNAL(clicked(bool)), this, SLOT(selectFile()));
+-	connect( ui.leFillingFileName, SIGNAL(returnPressed()), this, SLOT(fileNameChanged()) );
++	connect(ui.leFillingFileName, &QLineEdit::textChanged, this, &HistogramDock::fileNameChanged);
+ 	connect( ui.leFillingFileName, SIGNAL(textChanged(QString)), this, SLOT(fileNameChanged()) );
+ 	connect( ui.kcbFillingFirstColor, SIGNAL(changed(QColor)), this, SLOT(fillingFirstColorChanged(QColor)) );
+ 	connect( ui.kcbFillingSecondColor, SIGNAL(changed(QColor)), this, SLOT(fillingSecondColorChanged(QColor)) );
+@@ -382,7 +382,6 @@ void HistogramDock::setCurves(QList<Histogram*> list) {
+ 
+ 		this->setModelIndexFromColumn(cbDataColumn, m_curve->dataColumn());
+ 		this->setModelIndexFromColumn(cbValuesColumn, m_curve->valuesColumn());
+-
+ 		ui.leName->setText(m_curve->name());
+ 		ui.leComment->setText(m_curve->comment());
+ 	} else {
+@@ -393,7 +392,6 @@ void HistogramDock::setCurves(QList<Histogram*> list) {
+ 
+ 		ui.lXColumn->setEnabled(false);
+ 		cbDataColumn->setEnabled(false);
+-
+ 		cbDataColumn->setCurrentModelIndex(QModelIndex());
+ 		cbValuesColumn->setCurrentModelIndex(QModelIndex());
+ 
+@@ -460,6 +458,7 @@ void HistogramDock::setCurves(QList<Histogram*> list) {
+ 	connect(m_curve, &Histogram::valuesColorChanged, this, &HistogramDock::curveValuesColorChanged);
+ 
+ 	//Filling-Tab
++	connect( m_curve, &Histogram::fillingEnabledChanged, this, &HistogramDock::curveFillingEnabledChanged);
+ 	connect( m_curve, &Histogram::fillingTypeChanged, this, &HistogramDock::curveFillingTypeChanged);
+ 	connect( m_curve, &Histogram::fillingColorStyleChanged, this, &HistogramDock::curveFillingColorStyleChanged);
+ 	connect( m_curve, &Histogram::fillingImageStyleChanged, this, &HistogramDock::curveFillingImageStyleChanged);
+diff --git a/src/kdefrontend/dockwidgets/HistogramDock.h b/src/kdefrontend/dockwidgets/HistogramDock.h
+index 403fa3fa1..c04df9f1b 100644
+--- a/src/kdefrontend/dockwidgets/HistogramDock.h
++++ b/src/kdefrontend/dockwidgets/HistogramDock.h
+@@ -55,8 +55,6 @@ private:
+ 	TreeViewComboBox* cbValuesColumn;
+ 
+ 	void updateValuesWidgets();
+-
+-	void load();
+ 	void loadConfig(KConfig&);
+ 
+ protected:
+diff --git a/src/kdefrontend/dockwidgets/WorksheetDock.cpp b/src/kdefrontend/dockwidgets/WorksheetDock.cpp
+index d847cfc99..7adba59bd 100644
+--- a/src/kdefrontend/dockwidgets/WorksheetDock.cpp
++++ b/src/kdefrontend/dockwidgets/WorksheetDock.cpp
+@@ -84,23 +84,23 @@ WorksheetDock::WorksheetDock(QWidget *parent): BaseDock(parent) {
+ 	//General
+ 	connect(ui.leName, &QLineEdit::textChanged, this, &WorksheetDock::nameChanged);
+ 	connect(ui.leComment, &QLineEdit::textChanged, this, &WorksheetDock::commentChanged);
+-	connect(ui.cbSize, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
++	connect(ui.cbSize, QOverload<int>::of(&QComboBox::currentIndexChanged),
+ 			 this, static_cast<void (WorksheetDock::*)(int)>(&WorksheetDock::sizeChanged));
+ 	connect(ui.sbWidth, static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged),
+ 			this, static_cast<void (WorksheetDock::*)()>(&WorksheetDock::sizeChanged));
+ 	connect(ui.sbHeight, static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged),
+ 			 this, static_cast<void (WorksheetDock::*)()>(&WorksheetDock::sizeChanged));
+-	connect(ui.cbOrientation, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
++	connect(ui.cbOrientation, QOverload<int>::of(&QComboBox::currentIndexChanged),
+ 			 this, &WorksheetDock::orientationChanged);
+ 
+ 	//Background
+-	connect(ui.cbBackgroundType, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
++	connect(ui.cbBackgroundType, QOverload<int>::of(&QComboBox::currentIndexChanged),
+ 			 this, &WorksheetDock::backgroundTypeChanged);
+-	connect(ui.cbBackgroundColorStyle, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
++	connect(ui.cbBackgroundColorStyle, QOverload<int>::of(&QComboBox::currentIndexChanged),
+ 			 this, &WorksheetDock::backgroundColorStyleChanged);
+-	connect(ui.cbBackgroundImageStyle, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
++	connect(ui.cbBackgroundImageStyle, QOverload<int>::of(&QComboBox::currentIndexChanged),
+ 			 this, &WorksheetDock::backgroundImageStyleChanged);
+-	connect(ui.cbBackgroundBrushStyle, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
++	connect(ui.cbBackgroundBrushStyle, QOverload<int>::of(&QComboBox::currentIndexChanged),
+ 			 this, &WorksheetDock::backgroundBrushStyleChanged);
+ 	connect(ui.bOpen, &QPushButton::clicked, this, &WorksheetDock::selectFile);
+ 	connect(ui.leBackgroundFileName, &QLineEdit::returnPressed, this, &WorksheetDock::fileNameChanged);
+@@ -111,7 +111,7 @@ WorksheetDock::WorksheetDock(QWidget *parent): BaseDock(parent) {
+ 			this, &WorksheetDock::backgroundOpacityChanged);
+ 
+ 	//Layout
+-	connect(ui.cbLayout, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
++	connect(ui.cbLayout, QOverload<int>::of(&QComboBox::currentIndexChanged),
+ 			 this, &WorksheetDock::layoutChanged);
+ 	connect( ui.chScaleContent, &QCheckBox::clicked, this, &WorksheetDock::scaleContentChanged);
+ 	connect( ui.sbLayoutTopMargin, static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged),
 diff --git a/src/kdefrontend/dockwidgets/XYCurveDock.cpp b/src/kdefrontend/dockwidgets/XYCurveDock.cpp
 index 566fcb429..be455512f 100644
 --- a/src/kdefrontend/dockwidgets/XYCurveDock.cpp
@@ -337,6 +882,141 @@ index 566fcb429..be455512f 100644
  	connect( ui.leFillingFileName, SIGNAL(textChanged(QString)), this, SLOT(fileNameChanged()) );
  	connect( ui.kcbFillingFirstColor, SIGNAL(changed(QColor)), this, SLOT(fillingFirstColorChanged(QColor)) );
  	connect( ui.kcbFillingSecondColor, SIGNAL(changed(QColor)), this, SLOT(fillingSecondColorChanged(QColor)) );
+diff --git a/src/kdefrontend/dockwidgets/XYEquationCurveDock.cpp b/src/kdefrontend/dockwidgets/XYEquationCurveDock.cpp
+index b6479648b..b377fab1e 100644
+--- a/src/kdefrontend/dockwidgets/XYEquationCurveDock.cpp
++++ b/src/kdefrontend/dockwidgets/XYEquationCurveDock.cpp
+@@ -2,7 +2,7 @@
+     File             : XYEquationCurveDock.cpp
+     Project          : LabPlot
+     --------------------------------------------------------------------
+-    Copyright        : (C) 2014 Alexander Semke (alexander.semke@web.de)
++    Copyright        : (C) 2014-2021 Alexander Semke (alexander.semke@web.de)
+     Description      : widget for editing properties of equation curves
+ 
+  ***************************************************************************/
+@@ -101,21 +101,21 @@ void XYEquationCurveDock::setupGeneral() {
+ 	uiGeneralTab.teMax->setMaximumHeight(uiGeneralTab.leName->sizeHint().height());
+ 
+ 	//Slots
+-	connect( uiGeneralTab.leName, &QLineEdit::textChanged, this, &XYEquationCurveDock::nameChanged );
+-	connect( uiGeneralTab.leComment, &QLineEdit::textChanged, this, &XYEquationCurveDock::commentChanged );
+-	connect( uiGeneralTab.chkVisible, SIGNAL(clicked(bool)), this, SLOT(visibilityChanged(bool)) );
+-
+-	connect( uiGeneralTab.cbType, SIGNAL(currentIndexChanged(int)), this, SLOT(typeChanged(int)) );
+-	connect( uiGeneralTab.teEquation1, SIGNAL(expressionChanged()), this, SLOT(enableRecalculate()) );
+-	connect( uiGeneralTab.teEquation2, SIGNAL(expressionChanged()), this, SLOT(enableRecalculate()) );
+-	connect( uiGeneralTab.tbConstants1, SIGNAL(clicked()), this, SLOT(showConstants()) );
+-	connect( uiGeneralTab.tbFunctions1, SIGNAL(clicked()), this, SLOT(showFunctions()) );
+-	connect( uiGeneralTab.tbConstants2, SIGNAL(clicked()), this, SLOT(showConstants()) );
+-	connect( uiGeneralTab.tbFunctions2, SIGNAL(clicked()), this, SLOT(showFunctions()) );
+-	connect( uiGeneralTab.teMin, SIGNAL(expressionChanged()), this, SLOT(enableRecalculate()) );
+-	connect( uiGeneralTab.teMax, SIGNAL(expressionChanged()), this, SLOT(enableRecalculate()) );
+-	connect( uiGeneralTab.sbCount, SIGNAL(valueChanged(int)), this, SLOT(enableRecalculate()) );
+-	connect( uiGeneralTab.pbRecalculate, SIGNAL(clicked()), this, SLOT(recalculateClicked()) );
++	connect(uiGeneralTab.leName, &QLineEdit::textChanged, this, &XYEquationCurveDock::nameChanged);
++	connect(uiGeneralTab.leComment, &QLineEdit::textChanged, this, &XYEquationCurveDock::commentChanged);
++	connect(uiGeneralTab.chkVisible, &QCheckBox::clicked, this, &XYEquationCurveDock::visibilityChanged);
++
++	connect(uiGeneralTab.cbType, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &XYEquationCurveDock::typeChanged);
++	connect(uiGeneralTab.teEquation1, &ExpressionTextEdit::expressionChanged, this, &XYEquationCurveDock::enableRecalculate);
++	connect(uiGeneralTab.teEquation2, &ExpressionTextEdit::expressionChanged, this, &XYEquationCurveDock::enableRecalculate);
++	connect(uiGeneralTab.tbConstants1, &QToolButton::clicked, this, &XYEquationCurveDock::showConstants);
++	connect(uiGeneralTab.tbFunctions1, &QToolButton::clicked, this, &XYEquationCurveDock::showFunctions);
++	connect(uiGeneralTab.tbConstants2, &QToolButton::clicked, this, &XYEquationCurveDock::showConstants);
++	connect(uiGeneralTab.tbFunctions2, &QToolButton::clicked, this, &XYEquationCurveDock::showFunctions);
++	connect(uiGeneralTab.teMin, &ExpressionTextEdit::expressionChanged, this, &XYEquationCurveDock::enableRecalculate);
++	connect(uiGeneralTab.teMax, &ExpressionTextEdit::expressionChanged, this, &XYEquationCurveDock::enableRecalculate);
++	connect(uiGeneralTab.sbCount, QOverload<int>::of(&QSpinBox::valueChanged), this, &XYEquationCurveDock::enableRecalculate);
++	connect(uiGeneralTab.pbRecalculate, &QPushButton::clicked, this, &XYEquationCurveDock::recalculateClicked);
+ }
+ 
+ /*!
+@@ -171,10 +171,10 @@ void XYEquationCurveDock::initGeneralTab() {
+ 	uiGeneralTab.chkVisible->setChecked( m_curve->isVisible() );
+ 
+ 	//Slots
+-	connect(m_equationCurve, SIGNAL(aspectDescriptionChanged(const AbstractAspect*)),
+-			this, SLOT(curveDescriptionChanged(const AbstractAspect*)));
+-	connect(m_equationCurve, SIGNAL(equationDataChanged(XYEquationCurve::EquationData)),
+-			this, SLOT(curveEquationDataChanged(XYEquationCurve::EquationData)));
++	connect(m_equationCurve, &XYEquationCurve::aspectDescriptionChanged,
++			this, &XYEquationCurveDock::curveDescriptionChanged);
++	connect(m_equationCurve, &XYEquationCurve::equationDataChanged,
++			this, &XYEquationCurveDock::curveEquationDataChanged);
+ }
+ 
+ //*************************************************************
+@@ -245,7 +245,7 @@ void XYEquationCurveDock::recalculateClicked() {
+ 	data.count = uiGeneralTab.sbCount->value();
+ 
+ 	for (auto* curve : m_curvesList)
+-		dynamic_cast<XYEquationCurve*>(curve)->setEquationData(data);
++		static_cast<XYEquationCurve*>(curve)->setEquationData(data);
+ 
+ 	uiGeneralTab.pbRecalculate->setEnabled(false);
+ }
+@@ -255,12 +255,12 @@ void XYEquationCurveDock::showConstants() {
+ 	ConstantsWidget constants(&menu);
+ 
+ 	if (QObject::sender() == uiGeneralTab.tbConstants1)
+-		connect(&constants, SIGNAL(constantSelected(QString)), this, SLOT(insertConstant1(QString)));
++		connect(&constants, &ConstantsWidget::constantSelected, this, &XYEquationCurveDock::insertConstant1);
+ 	else
+-		connect(&constants, SIGNAL(constantSelected(QString)), this, SLOT(insertConstant2(QString)));
++		connect(&constants, &ConstantsWidget::constantSelected, this, &XYEquationCurveDock::insertConstant2);
+ 
+-	connect(&constants, SIGNAL(constantSelected(QString)), &menu, SLOT(close()));
+-	connect(&constants, SIGNAL(canceled()), &menu, SLOT(close()));
++	connect(&constants, &ConstantsWidget::constantSelected, &menu, &QMenu::close);
++	connect(&constants, &ConstantsWidget::canceled, &menu, &QMenu::close);
+ 
+ 	auto* widgetAction = new QWidgetAction(this);
+ 	widgetAction->setDefaultWidget(&constants);
+@@ -279,12 +279,12 @@ void XYEquationCurveDock::showFunctions() {
+ 	QMenu menu;
+ 	FunctionsWidget functions(&menu);
+ 	if (QObject::sender() == uiGeneralTab.tbFunctions1)
+-		connect(&functions, SIGNAL(functionSelected(QString)), this, SLOT(insertFunction1(QString)));
++		connect(&functions, &FunctionsWidget::functionSelected, this, &XYEquationCurveDock::insertFunction1);
+ 	else
+-		connect(&functions, SIGNAL(functionSelected(QString)), this, SLOT(insertFunction2(QString)));
++		connect(&functions, &FunctionsWidget::functionSelected, this, &XYEquationCurveDock::insertFunction2);
+ 
+-	connect(&functions, SIGNAL(functionSelected(QString)), &menu, SLOT(close()));
+-	connect(&functions, SIGNAL(canceled()), &menu, SLOT(close()));
++	connect(&functions, &FunctionsWidget::functionSelected, &menu, &QMenu::close);
++	connect(&functions, &FunctionsWidget::canceled, &menu, &QMenu::close);
+ 
+ 	auto* widgetAction = new QWidgetAction(this);
+ 	widgetAction->setDefaultWidget(&functions);
+@@ -341,22 +341,19 @@ void XYEquationCurveDock::curveDescriptionChanged(const AbstractAspect* aspect)
+ 	if (m_curve != aspect)
+ 		return;
+ 
+-	m_initializing = true;
+-	if (aspect->name() != uiGeneralTab.leName->text()) {
++	const Lock lock(m_initializing);
++	if (aspect->name() != uiGeneralTab.leName->text())
+ 		uiGeneralTab.leName->setText(aspect->name());
+-	} else if (aspect->comment() != uiGeneralTab.leComment->text()) {
++	else if (aspect->comment() != uiGeneralTab.leComment->text())
+ 		uiGeneralTab.leComment->setText(aspect->comment());
+-	}
+-	m_initializing = false;
+ }
+ 
+ void XYEquationCurveDock::curveEquationDataChanged(const XYEquationCurve::EquationData& data) {
+-	m_initializing = true;
++	const Lock lock(m_initializing);
+ 	uiGeneralTab.cbType->setCurrentIndex(static_cast<int>(data.type));
+ 	uiGeneralTab.teEquation1->setText(data.expression1);
+ 	uiGeneralTab.teEquation2->setText(data.expression2);
+ 	uiGeneralTab.teMin->setText(data.min);
+ 	uiGeneralTab.teMax->setText(data.max);
+ 	uiGeneralTab.sbCount->setValue(data.count);
+-	m_initializing = false;
+ }
 diff --git a/src/kdefrontend/dockwidgets/XYFitCurveDock.cpp b/src/kdefrontend/dockwidgets/XYFitCurveDock.cpp
 index 3c28f9e4c..625d35fc4 100644
 --- a/src/kdefrontend/dockwidgets/XYFitCurveDock.cpp
@@ -363,3 +1043,60 @@ index 3c28f9e4c..625d35fc4 100644
  
  	if (m_initializing)
  		return;
+diff --git a/src/kdefrontend/ui/datasources/importprojectwidget.ui b/src/kdefrontend/ui/datasources/importprojectwidget.ui
+index 5e626f7f3..d8754d673 100644
+--- a/src/kdefrontend/ui/datasources/importprojectwidget.ui
++++ b/src/kdefrontend/ui/datasources/importprojectwidget.ui
+@@ -6,8 +6,8 @@
+    <rect>
+     <x>0</x>
+     <y>0</y>
+-    <width>745</width>
+-    <height>667</height>
++    <width>542</width>
++    <height>534</height>
+    </rect>
+   </property>
+   <layout class="QVBoxLayout" name="verticalLayout_2">
+@@ -16,8 +16,15 @@
+      <property name="title">
+       <string>Project</string>
+      </property>
+-     <layout class="QGridLayout" name="gridLayout">
+-      <item row="0" column="2">
++     <layout class="QHBoxLayout" name="horizontalLayout">
++      <item>
++       <widget class="QLabel" name="lFileName">
++        <property name="text">
++         <string>File name:</string>
++        </property>
++       </widget>
++      </item>
++      <item>
+        <widget class="QPushButton" name="bOpen">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+@@ -33,23 +40,6 @@
+         </property>
+        </widget>
+       </item>
+-      <item row="0" column="0">
+-       <widget class="QLabel" name="lFileName">
+-        <property name="text">
+-         <string>File name:</string>
+-        </property>
+-       </widget>
+-      </item>
+-      <item row="0" column="1">
+-       <widget class="QLineEdit" name="leFileName">
+-        <property name="toolTip">
+-         <string>Specify the name of the file to import.</string>
+-        </property>
+-        <property name="showClearButton" stdset="0">
+-         <bool>true</bool>
+-        </property>
+-       </widget>
+-      </item>
+      </layout>
+     </widget>
+    </item>
