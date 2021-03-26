@@ -193,7 +193,7 @@
             "sources": [
                 {
                     "type": "archive",
-                    "url": "https://download.kde.org/stable/labplot/2.8.1/labplot-2.8.2.tar.xz",
+                    "url": "https://download.kde.org/stable/labplot/2.8.2/labplot-2.8.2.tar.xz",
                     "sha256": "8ec581da971735bfab20c28b1a7507196bf102a991d895bb1ec892c521b31dfa"
                 }
             ]
