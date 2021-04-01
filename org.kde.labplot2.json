@@ -76,8 +76,8 @@
                 {
                     "type": "git",
                     "url": "https://github.com/qt/qtmqtt.git",
-                    "commit": "0da764d8fec459ee28b70f68028ada81ed31abf7",
-                    "tag": "v5.15.1"
+                    "commit": "cade213f562049400da81e60762400df68d7c56b",
+                    "tag": "v5.15.2"
                 }
             ]
         },
@@ -110,8 +110,8 @@
             "sources": [
                 {
                     "type": "archive",
-                    "url": "https://github.com/KDE/cantor/archive/v20.08.3.tar.gz",
-                    "sha256": "de09cb78d2f26cabd355a57827dde2ff54fa53f1c30bed5db9614bf7bda032e7"
+                    "url": "https://github.com/KDE/cantor/archive/v20.12.3.tar.gz",
+                    "sha256": "8ba7c6f434b5a1cbf53b65ee3b1fb01dd895836d7368a506f00a23bef0d73da1"
                 }
             ],
             "modules": [
@@ -121,8 +121,8 @@
                     "sources": [
                         {
                             "type": "archive",
-                            "url": "https://github.com/KDE/analitza/archive/v20.08.3.tar.gz",
-                            "sha256": "a386546b45488552571c9f23ee7c8c2c138bcc258e150fb9d9a2a6c9d6adbd7f"
+                            "url": "https://github.com/KDE/analitza/archive/v20.12.3.tar.gz",
+                            "sha256": "fe5b8d452c26cd65242de82f22b99e69b75d6d639d8f615e603d48d9f90f5673"
                         }
                     ],
                     "modules": [
@@ -136,8 +136,8 @@
                             "sources": [
                                 {
                                     "type": "archive",
-                                    "url": "https://gitlab.com/libeigen/eigen/-/archive/3.3.8/eigen-3.3.8.tar.bz2",
-                                    "sha256": "0215c6593c4ee9f1f7f28238c4e8995584ebf3b556e9dbf933d84feb98d5b9ef"
+                                    "url": "https://gitlab.com/libeigen/eigen/-/archive/3.3.9/eigen-3.3.9.tar.bz2",
+                                    "sha256": "0fa5cafe78f66d2b501b43016858070d52ba47bd9b1016b0165a7b8e04675677"
                                 }
                             ]
                         }
@@ -158,8 +158,8 @@
                     "sources": [
                         {
                             "type": "archive",
-                            "url": "https://github.com/freedesktop/poppler/archive/poppler-20.11.0.tar.gz",
-                            "sha256": "1451c47e1be0f3417f74b1c1415f737368a467012c14b9fff18c66e53d887c19"
+                            "url": "https://github.com/freedesktop/poppler/archive/poppler-21.03.0.tar.gz",
+                            "sha256": "a6a17b92406448ab869191b46e04fcb1d79f479df3beb9d807c81a0de070eb25"
                         }
                     ],
                     "modules": [
@@ -170,8 +170,8 @@
                             "sources": [
                                 {
                                     "type": "archive",
-                                    "url": "https://github.com/uclouvain/openjpeg/archive/v2.3.1.tar.gz",
-                                    "sha256": "63f5a4713ecafc86de51bfad89cc07bb788e9bba24ebbf0c4ca637621aadb6a9"
+                                    "url": "https://github.com/uclouvain/openjpeg/archive/v2.4.0.tar.gz",
+                                    "sha256": "8702ba68b442657f11aaeb2b338443ca8d5fb95b0d845757968a7be31ef7f16d"
                                 }
                             ],
                             "cleanup": [
