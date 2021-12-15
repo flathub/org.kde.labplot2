@@ -144,6 +144,17 @@
                         }
                     ]
                 },
+		{
+                    "name": "qtwebengine",
+                    "buildsystem": "cmake-ninja",
+                    "sources": [
+                        {
+                            "type": "archive",
+                            "url": "https://github.com/qt/qtwebengine/archive/v5.15.7-lts.tar.gz",
+                            "sha256": "ef71f5bd741c917787a9431a2c359842de15a14126ef5f34ac28c8b0c07304ae"
+                        }
+                    ]
+		},
                 {
                     "name": "poppler",
                     "config-opts": [
