@@ -8,7 +8,8 @@
     "finish-args": [
         "--share=ipc",
         "--socket=x11",
-        "--socket=wayland"
+        "--socket=wayland",
+        "--filesystem=home"
     ],
     "cleanup": [
         "/include",
@@ -27,8 +28,8 @@
             "sources": [
                 {
                     "type": "archive",
-                    "url": "http://ftp.gnu.org/gnu/gsl/gsl-2.6.tar.gz",
-                    "sha256": "b782339fc7a38fe17689cb39966c4d821236c28018b6593ddb6fd59ee40786a8"
+                    "url": "http://ftp.gnu.org/gnu/gsl/gsl-2.7.tar.gz",
+                    "sha256": "efbbf3785da0e53038be7907500628b466152dbc3c173a87de1b5eba2e23602b"
                 }
             ]
         },
@@ -40,8 +41,8 @@
             "sources": [
                 {
                     "type": "archive",
-                    "url": "https://support.hdfgroup.org/ftp/HDF5/releases/hdf5-1.10/hdf5-1.10.7/src/hdf5-1.10.7.tar.gz",
-                    "sha256": "7a1a0a54371275ce2dfc5cd093775bb025c365846512961e7e5ceaecb437ef15"
+                    "url": "https://support.hdfgroup.org/ftp/HDF5/releases/hdf5-1.10/hdf5-1.10.7/src/hdf5-1.10.8.tar.gz",
+                    "sha256": "d341b80d380dd763753a0ebe22915e11e87aac4e44a084a850646ff934d19c80"
                 }
             ]
         },
@@ -110,8 +111,8 @@
             "sources": [
                 {
                     "type": "archive",
-                    "url": "https://github.com/KDE/cantor/archive/v20.12.3.tar.gz",
-                    "sha256": "8ba7c6f434b5a1cbf53b65ee3b1fb01dd895836d7368a506f00a23bef0d73da1"
+                    "url": "https://github.com/KDE/cantor/archive/v21.12.0.tar.gz",
+                    "sha256": "a8ef22abb31f3d9d31efc1c5e807bcfd3c46fcfbd4ed7d591ef02f4df5f1afae"
                 }
             ],
             "modules": [
@@ -121,8 +122,8 @@
                     "sources": [
                         {
                             "type": "archive",
-                            "url": "https://github.com/KDE/analitza/archive/v20.12.3.tar.gz",
-                            "sha256": "fe5b8d452c26cd65242de82f22b99e69b75d6d639d8f615e603d48d9f90f5673"
+                            "url": "https://github.com/KDE/analitza/archive/v21.12.0.tar.gz",
+                            "sha256": "0c6f940e5a21bf4b16370e5ef1bd50142b12d99a7c2fbbcf90f86df43d9cc7f2"
                         }
                     ],
                     "modules": [
@@ -136,8 +137,8 @@
                             "sources": [
                                 {
                                     "type": "archive",
-                                    "url": "https://gitlab.com/libeigen/eigen/-/archive/3.3.9/eigen-3.3.9.tar.bz2",
-                                    "sha256": "0fa5cafe78f66d2b501b43016858070d52ba47bd9b1016b0165a7b8e04675677"
+                                    "url": "https://gitlab.com/libeigen/eigen/-/archive/3.4.0/eigen-3.4.0.tar.bz2",
+                                    "sha256": "b4c198460eba6f28d34894e3a5710998818515104d6e74e5cc331ce31e46e626"
                                 }
                             ]
                         }
@@ -158,8 +159,8 @@
                     "sources": [
                         {
                             "type": "archive",
-                            "url": "https://github.com/freedesktop/poppler/archive/poppler-21.03.0.tar.gz",
-                            "sha256": "a6a17b92406448ab869191b46e04fcb1d79f479df3beb9d807c81a0de070eb25"
+                            "url": "https://github.com/freedesktop/poppler/archive/poppler-21.12.0.tar.gz",
+                            "sha256": "a185c026ddf18930f2e0bce02ff75d3dd207848fe53706f03e666167ca647450"
                         }
                     ],
                     "modules": [
