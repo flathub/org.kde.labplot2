@@ -8,10 +8,11 @@
     "command": "labplot2",
     "rename-icon": "labplot2",
     "finish-args": [
+        "--share=network",
         "--share=ipc",
         "--socket=x11",
         "--socket=wayland",
-        "--filesystem=home"
+        "--filesystem=host"
     ],
     "cleanup": [
         "/include",
