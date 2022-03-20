@@ -32,8 +32,8 @@
             "sources": [
                 {
                     "type": "archive",
-                    "url": "http://ftp.gnu.org/gnu/gsl/gsl-2.7.tar.gz",
-                    "sha256": "efbbf3785da0e53038be7907500628b466152dbc3c173a87de1b5eba2e23602b",
+                    "url": "http://ftp.gnu.org/gnu/gsl/gsl-2.7.1.tar.gz",
+                    "sha256": "dcb0fbd43048832b757ff9942691a8dd70026d5da0ff85601e52687f6deeb34b",
                     "x-checker-data": {
                         "type": "anitya",
                         "project-id": 1267,
@@ -61,8 +61,8 @@
             "sources": [
                 {
                     "type": "archive",
-                    "url": "https://github.com/Unidata/netcdf-c/archive/v4.7.4.tar.gz",
-                    "sha256": "99930ad7b3c4c1a8e8831fb061cb02b2170fc8e5ccaeda733bd99c3b9d31666b",
+                    "url": "https://github.com/Unidata/netcdf-c/archive/v4.8.1.tar.gz",
+                    "sha256": "bc018cc30d5da402622bf76462480664c6668b55eb16ba205a0dfb8647161dd0",
                     "x-checker-data": {
                         "type": "anitya",
                         "project-id": 10354,
@@ -77,8 +77,8 @@
             "sources": [
                 {
                     "type": "archive",
-                    "url": "http://heasarc.gsfc.nasa.gov/FTP/software/fitsio/c/cfitsio-3.49.tar.gz",
-                    "sha256": "5b65a20d5c53494ec8f638267fca4a629836b7ac8dd0ef0266834eab270ed4b3",
+                    "url": "http://heasarc.gsfc.nasa.gov/FTP/software/fitsio/c/cfitsio-4.1.0.tar.gz",
+                    "sha256": "748994dd1c819b88567e3539ea1f0ec2dd39fc0ed2884c033afa3da66efb5f4e",
                     "x-checker-data": {
                         "type": "html",
                         "url": "http://heasarc.gsfc.nasa.gov/FTP/software/fitsio/c/",
@@ -111,8 +111,8 @@
             "sources": [
                 {
                     "type": "archive",
-                    "url": "https://jugit.fz-juelich.de/mlz/libcerf/-/archive/v1.14/libcerf-v1.14.tar.gz",
-                    "sha256": "065346b3360943c9961517f8c49ae13fe956835f6fc3b53e9d307e41feec3a34",
+                    "url": "https://jugit.fz-juelich.de/mlz/libcerf/-/archive/v2.0/libcerf-v2.0.tar.gz",
+                    "sha256": "c86e8b1ea18ac7747582e83dba6f42f0faea1deb5005b7ffb2e508e36b579716",
                     "x-checker-data": {
                         "type": "anitya",
                         "project-id": 20199,
@@ -145,8 +145,8 @@
             "sources": [
                 {
                     "type": "archive",
-                    "url": "https://github.com/KDE/cantor/archive/v21.12.0.tar.gz",
-                    "sha256": "a8ef22abb31f3d9d31efc1c5e807bcfd3c46fcfbd4ed7d591ef02f4df5f1afae",
+                    "url": "https://github.com/KDE/cantor/archive/v22.03.80.tar.gz",
+                    "sha256": "b3c492721ec1b5368fb3033623c40dab696c084e14b6350388f0825b9f01ee14",
                     "x-checker-data": {
                         "type": "anitya",
                         "project-id": 236341,
@@ -162,8 +162,8 @@
                     "sources": [
                         {
                             "type": "archive",
-                            "url": "https://github.com/KDE/analitza/archive/v21.12.0.tar.gz",
-                            "sha256": "0c6f940e5a21bf4b16370e5ef1bd50142b12d99a7c2fbbcf90f86df43d9cc7f2",
+                            "url": "https://github.com/KDE/analitza/archive/v21.12.3.tar.gz",
+                            "sha256": "abbaf3179b4bc68ce4b7e98123a0031e1a69b0a1dbba45f96167830dec2ae6af",
                             "x-checker-data": {
                                 "type": "anitya",
                                 "project-id": 8763,
@@ -211,8 +211,8 @@
                     "sources": [
                         {
                             "type": "archive",
-                            "url": "https://github.com/freedesktop/poppler/archive/poppler-21.12.0.tar.gz",
-                            "sha256": "a185c026ddf18930f2e0bce02ff75d3dd207848fe53706f03e666167ca647450",
+                            "url": "https://poppler.freedesktop.org/poppler-22.03.0.tar.xz",
+                            "sha256": "728c78ba94d75a55f6b6355d4fbdaa6f49934d9616be58e5e679a9cfd0980e1e",
                             "x-checker-data": {
                                 "type": "anitya",
                                 "project-id": 3686,
@@ -236,7 +236,7 @@
                                         "project-id": 2550,
                                         "stable-only": true,
                                         "url-template": "https://github.com/uclouvain/openjpeg/archive/v$version.tar.gz"
-                                     }
+                                    }
                                 }
                             ],
                             "cleanup": [
