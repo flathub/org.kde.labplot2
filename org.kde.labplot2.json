@@ -140,6 +140,26 @@
             ]
         },
         {
+            "name": "readstat",
+            "sources": [
+                {
+                    "type": "archive",
+                    "url": "https://github.com/WizardMac/ReadStat/archive/v1.1.7.tar.gz",
+                    "sha256": "c1cf06c5b9347cbbaf63525a0fa9c2ddb6d927685883003b46431e995755392b"
+                }
+            ]
+        },
+        {
+            "name": "matio",
+            "sources": [
+                {
+                    "type": "archive",
+                    "url": "https://github.com/tbeu/matio/archive/v1.5.21.tar.gz",
+                    "sha256": "2b09738fc765609794cdd4745649dcb2d7a528e9ef427c3b8e2a0d71d37d02f7"
+                }
+            ]
+        },
+        {
             "name": "cantor",
             "buildsystem": "cmake-ninja",
             "sources": [
