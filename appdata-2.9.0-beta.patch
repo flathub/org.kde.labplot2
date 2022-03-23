@@ -6,7 +6,7 @@ diff -ruNa a/org.kde.labplot2.appdata.xml labplot-2.9.0-beta/org.kde.labplot2.ap
      </screenshot>
      <screenshot type="default">
 -      <caption>Notebook interface for interactive sessions in Maxima, Octave, R, Sage, Scilab, Python, Julia and Lua</caption>
-+      <caption>Notebook interface for interactive sessions in Maxima, Octave, R, Sage, Scilab, Python, Julia, etc.</caption>
++      <caption>Notebook interface for interactive sessions in Maxima, Octave, R, Sage, Scilab, Python, Julia, etc</caption>
        <caption xml:lang="ar">واجهة حاسوب دفتري للجلسات التفاعلية في Maxima و Octave و R و Sage و Scilab و Python و Julia و Lua</caption>
        <caption xml:lang="ca">Interfície de bloc de notes per a sessions interactives en el Maxima, Octave, R, Sage, Scilab, Python, Julia i Lua</caption>
        <caption xml:lang="ca-valencia">Interfície de bloc de notes per a sessions interactives en el Maxima, Octave, R, Sage, Scilab, Python, Julia i Lua</caption>
