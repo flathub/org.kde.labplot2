@@ -1,0 +1,12 @@
+diff -ruNa a/org.kde.labplot2.appdata.xml labplot-2.9.0-beta/org.kde.labplot2.appdata.xml
+--- a/org.kde.labplot2.appdata.xml	2022-03-18 09:44:41.000000000 +0100
++++ b/org.kde.labplot2.appdata.xml	2022-03-23 10:29:55.666160734 +0100
+@@ -223,7 +223,7 @@
+       <image>https://cdn.kde.org/screenshots/labplot2/07_smooth_linux.png</image>
+     </screenshot>
+     <screenshot type="default">
+-      <caption>Notebook interface for interactive sessions in Maxima, Octave, R, Sage, Scilab, Python, Julia and Lua</caption>
++      <caption>Notebook interface for interactive sessions in Maxima, Octave, R, Sage, Scilab, Python, Julia, etc.</caption>
+       <caption xml:lang="ar">واجهة حاسوب دفتري للجلسات التفاعلية في Maxima و Octave و R و Sage و Scilab و Python و Julia و Lua</caption>
+       <caption xml:lang="ca">Interfície de bloc de notes per a sessions interactives en el Maxima, Octave, R, Sage, Scilab, Python, Julia i Lua</caption>
+       <caption xml:lang="ca-valencia">Interfície de bloc de notes per a sessions interactives en el Maxima, Octave, R, Sage, Scilab, Python, Julia i Lua</caption>
