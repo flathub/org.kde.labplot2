@@ -78,7 +78,7 @@
                 {
                     "type": "archive",
                     "url": "http://heasarc.gsfc.nasa.gov/FTP/software/fitsio/c/cfitsio-4.1.0.tar.gz",
-                    "sha256": "b367c695d2831958e7166921c3b356d5dfa51b1ecee505b97416ba39d1b6c17a",
+                    "sha256": "748994dd1c819b88567e3539ea1f0ec2dd39fc0ed2884c033afa3da66efb5f4e",
                     "x-checker-data": {
                         "type": "html",
                         "url": "http://heasarc.gsfc.nasa.gov/FTP/software/fitsio/c/",
@@ -299,8 +299,8 @@
             "sources": [
                 {
                     "type": "archive",
-                    "url": "https://download.kde.org/stable/labplot/2.9.0/labplot-2.9.0-beta.tar.xz",
-                    "sha256": "876e403ac1aaadd614030fc1997018bbc73ebab04c080e3e1bcc81f404d3bc2f",
+                    "url": "https://download.kde.org/stable/labplot/2.8.2/labplot-2.8.2.tar.xz",
+                    "sha256": "8ec581da971735bfab20c28b1a7507196bf102a991d895bb1ec892c521b31dfa",
                     "x-checker-data": {
                         "type": "anitya",
                         "project-id": 1532,
