@@ -161,6 +161,13 @@
         },
         {
             "name": "discount",
+            "buildsystem": "simple",
+            "build-commands": [
+                "./configure.sh --prefix=/app --confdir=/etc --pkg-config",
+                "make",
+                "make install"
+            ],
+
             "sources": [
                 {
                     "type": "archive",
