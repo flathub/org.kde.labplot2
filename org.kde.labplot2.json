@@ -167,7 +167,6 @@
                 "make",
                 "make install"
             ],
-
             "sources": [
                 {
                     "type": "archive",
@@ -316,8 +315,8 @@
             "sources": [
                 {
                     "type": "archive",
-                    "url": "https://download.kde.org/stable/labplot/2.9.0/labplot-2.9.0-beta.tar.xz",
-                    "sha256": "876e403ac1aaadd614030fc1997018bbc73ebab04c080e3e1bcc81f404d3bc2f",
+                    "url": "https://download.kde.org/stable/labplot/2.8.2/labplot-2.8.2.tar.xz",
+                    "sha256": "8ec581da971735bfab20c28b1a7507196bf102a991d895bb1ec892c521b31dfa",
                     "x-checker-data": {
                         "type": "anitya",
                         "project-id": 1532,
@@ -327,7 +326,7 @@
                 },
                 {
                     "type": "patch",
-		    "path": "appdata-2.9.0-beta.patch"
+                    "path": "appdata-2.9.0-beta.patch"
                 }
             ]
         }
