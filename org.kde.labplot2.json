@@ -315,7 +315,7 @@
                 },
                 {
                     "type": "patch",
-		    "path": "appdata-2.9.0-beta.patch"
+                    "path": "appdata-2.9.0-beta.patch"
                 }
             ]
         }
