@@ -105,8 +105,8 @@
             "sources": [
                 {
                     "type": "archive",
-                    "url": "https://jugit.fz-juelich.de/mlz/libcerf/-/archive/v2.0/libcerf-v2.0.tar.gz",
-                    "sha256": "c86e8b1ea18ac7747582e83dba6f42f0faea1deb5005b7ffb2e508e36b579716",
+                    "url": "https://jugit.fz-juelich.de/mlz/libcerf/-/archive/v2.1/libcerf-v2.1.tar.gz",
+                    "sha256": "8a1cd8b7fae04b82a95168252129b8c1baca098a285ff8d3f25781dead14b75a",
                     "x-checker-data": {
                         "type": "anitya",
                         "project-id": 20199,
