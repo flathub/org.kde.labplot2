@@ -175,8 +175,8 @@
             "sources": [
                 {
                     "type": "archive",
-                    "url": "https://github.com/KDE/cantor/archive/v22.03.80.tar.gz",
-                    "sha256": "b3c492721ec1b5368fb3033623c40dab696c084e14b6350388f0825b9f01ee14",
+                    "url": "https://github.com/KDE/cantor/archive/v22.04.0.tar.gz",
+                    "sha256": "5f7bc27b12e8b908198bd17da9b0751fc7e2c0dd8c2b914b0218f6fd14949a3d",
                     "x-checker-data": {
                         "type": "anitya",
                         "project-id": 236341,
@@ -317,7 +317,7 @@
                         "stable-only": true,
                         "url-template": "https://download.kde.org/stable/labplot/$version/labplot-$version.tar.xz"
                     }
-	        }
+                }
             ]
         }
     ]
