@@ -148,8 +148,8 @@
             "sources": [
                 {
                     "type": "archive",
-                    "url": "https://github.com/tbeu/matio/archive/v1.5.21.tar.gz",
-                    "sha256": "2b09738fc765609794cdd4745649dcb2d7a528e9ef427c3b8e2a0d71d37d02f7"
+                    "url": "https://github.com/tbeu/matio/archive/v1.5.23.tar.gz",
+                    "sha256": "9f91eae661df46ea53c311a1b2dcff72051095b023c612d7cbfc09406c9f4d6e"
                 }
             ]
         },
