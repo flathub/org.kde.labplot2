@@ -138,8 +138,8 @@
             "sources": [
                 {
                     "type": "archive",
-                    "url": "https://github.com/WizardMac/ReadStat/archive/v1.1.7.tar.gz",
-                    "sha256": "c1cf06c5b9347cbbaf63525a0fa9c2ddb6d927685883003b46431e995755392b"
+                    "url": "https://github.com/WizardMac/ReadStat/archive/v1.1.8.tar.gz",
+                    "sha256": "b18a0d68059d9665491e53838b3ca89b06c3bdaa3b0a11d4ba87d830b743e178"
                 }
             ]
         },
