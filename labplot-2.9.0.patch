@@ -1,0 +1,20 @@
+diff -ruNa a/src/backend/worksheet/plots/cartesian/XYCurve.cpp b/src/backend/worksheet/plots/cartesian/XYCurve.cpp
+--- a/src/backend/worksheet/plots/cartesian/XYCurve.cpp	2022-05-02 07:35:16.000000000 +0200
++++ b/src/backend/worksheet/plots/cartesian/XYCurve.cpp	2022-06-16 19:16:47.659840451 +0200
+@@ -1942,10 +1942,14 @@
+ 			return;
+ 		}
+ 
+-		const int endRow{qMin(numberOfPoints, valuesColumn->rowCount())};
++		const int endRow{qMin(qMin(xColumn->rowCount(), yColumn->rowCount()), valuesColumn->rowCount())};
+ 		auto xColMode{valuesColumn->columnMode()};
++		int index = 0; // index of valid points (logicalPoints)
+ 		for (int i = 0; i < endRow; ++i) {
+-			if (!m_pointVisible.at(i)) continue;
++			// ignore value labels for invalid data points
++			// otherwise the assignment to the data points get lost
++			if (!xColumn->isValid(i) || xColumn->isMasked(i) || !yColumn->isValid(i) || yColumn->isMasked(i) || !m_pointVisible.at(index++))
++				continue;
+ 
+ 			if ( !valuesColumn->isValid(i) || valuesColumn->isMasked(i) ) {
+ 				m_valueStrings << QString();

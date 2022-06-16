@@ -316,7 +316,12 @@
                         "project-id": 1532,
                         "stable-only": true,
                         "url-template": "https://download.kde.org/stable/labplot/$version/labplot-$version.tar.xz"
+                    },
+                    {
+                        "type": "patch",
+                        "path": "labplot-2.9.0.patch"
                     }
+
                 }
             ]
         }
