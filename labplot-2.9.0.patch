@@ -1,14 +1,21 @@
 diff -ruNa a/src/backend/worksheet/plots/cartesian/XYCurve.cpp b/src/backend/worksheet/plots/cartesian/XYCurve.cpp
 --- a/src/backend/worksheet/plots/cartesian/XYCurve.cpp	2022-05-02 07:35:16.000000000 +0200
-+++ b/src/backend/worksheet/plots/cartesian/XYCurve.cpp	2022-06-16 19:16:47.659840451 +0200
-@@ -1942,10 +1942,14 @@
++++ b/src/backend/worksheet/plots/cartesian/XYCurve.cpp	2022-06-18 13:12:58.340448549 +0200
+@@ -1942,18 +1942,47 @@
  			return;
  		}
  
 -		const int endRow{qMin(numberOfPoints, valuesColumn->rowCount())};
+-		auto xColMode{valuesColumn->columnMode()};
 +		const int endRow{qMin(qMin(xColumn->rowCount(), yColumn->rowCount()), valuesColumn->rowCount())};
- 		auto xColMode{valuesColumn->columnMode()};
-+		int index = 0; // index of valid points (logicalPoints)
++		auto xColMode{xColumn->columnMode()};
++		auto vColMode{valuesColumn->columnMode()};
++
++		// need to check x range
++		auto cs = plot()->coordinateSystem(q->coordinateSystemIndex());
++		auto xRange = plot()->xRange(cs->xIndex());
++
++		size_t index = 0; // index of valid points (logicalPoints)
  		for (int i = 0; i < endRow; ++i) {
 -			if (!m_pointVisible.at(i)) continue;
 +			// ignore value labels for invalid data points
@@ -18,3 +25,40 @@ diff -ruNa a/src/backend/worksheet/plots/cartesian/XYCurve.cpp b/src/backend/wor
  
  			if ( !valuesColumn->isValid(i) || valuesColumn->isMasked(i) ) {
  				m_valueStrings << QString();
+ 				continue;
+ 			}
+ 
++			// check if inside x range
+ 			switch (xColMode) {
+ 			case AbstractColumn::ColumnMode::Double:
++			case AbstractColumn::ColumnMode::Integer:
++			case AbstractColumn::ColumnMode::BigInt:
++				if (!xRange.contains(xColumn->valueAt(i)))
++					continue;
++				break;
++			case AbstractColumn::ColumnMode::DateTime:
++			case AbstractColumn::ColumnMode::Month:
++			case AbstractColumn::ColumnMode::Day:
++				if (xColumn->dateTimeAt(i) < QDateTime::fromMSecsSinceEpoch(xRange.start())
++					|| xColumn->dateTimeAt(i) > QDateTime::fromMSecsSinceEpoch(xRange.end()))
++					continue;
++				break;
++			case AbstractColumn::ColumnMode::Text:
++				break;
++			}
++
++			switch (vColMode) {
++			case AbstractColumn::ColumnMode::Double:
+ 				m_valueStrings << valuesPrefix + numberLocale.toString(valuesColumn->valueAt(i), valuesNumericFormat, valuesPrecision) + valuesSuffix;
+ 				break;
+ 			case AbstractColumn::ColumnMode::Integer:
+@@ -1982,6 +2011,9 @@
+ 
+ 	i = 0;
+ 	for (const auto& string : qAsConst(m_valueStrings)) {
++		// catch case with more label strings than scene points (should not happen even with custom column)
++		if (i >= m_scenePoints.size())
++			break;
+ 		const int w{fm.boundingRect(string).width()};
+ 		const double x{m_scenePoints.at(i).x()};
+ 		const double y{m_scenePoints.at(i).y()};
