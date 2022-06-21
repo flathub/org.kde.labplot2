@@ -62,3 +62,16 @@ diff -ruNa a/src/backend/worksheet/plots/cartesian/XYCurve.cpp b/src/backend/wor
  		const int w{fm.boundingRect(string).width()};
  		const double x{m_scenePoints.at(i).x()};
  		const double y{m_scenePoints.at(i).y()};
+diff -ruNa a/src/backend/worksheet/plots/cartesian/XYFitCurve.cpp b/src/backend/worksheet/plots/cartesian/XYFitCurve.cpp
+--- a/src/backend/worksheet/plots/cartesian/XYFitCurve.cpp     2022-05-02 07:35:16.000000000 +0200
++++ b/src/backend/worksheet/plots/cartesian/XYFitCurve.cpp  2022-06-21 17:12:14.838901412 +0200
+@@ -2152,8 +2152,7 @@
+        if (preview)    // results not available yet
+                paramValues = fitData.paramStartValues;
+ 
+-       SET_NUMBER_LOCALE
+-       bool rc = parser->evaluateCartesian(fitData.model, numberLocale.toString(xRange.start()), numberLocale.toString(xRange.end()), (int)fitData.evaluatedPoints,
++       bool rc = parser->evaluateCartesian(fitData.model, QString::number(xRange.start()), QString::number(xRange.end()), (int)fitData.evaluatedPoints,
+                                                xVector, yVector, fitData.paramNames, paramValues);
+        if (!rc) {
+                DEBUG(Q_FUNC_INFO << ", ERROR: Parsing fit function failed")
