@@ -63,15 +63,99 @@ diff -ruNa a/src/backend/worksheet/plots/cartesian/XYCurve.cpp b/src/backend/wor
  		const double x{m_scenePoints.at(i).x()};
  		const double y{m_scenePoints.at(i).y()};
 diff -ruNa a/src/backend/worksheet/plots/cartesian/XYFitCurve.cpp b/src/backend/worksheet/plots/cartesian/XYFitCurve.cpp
---- a/src/backend/worksheet/plots/cartesian/XYFitCurve.cpp     2022-05-02 07:35:16.000000000 +0200
-+++ b/src/backend/worksheet/plots/cartesian/XYFitCurve.cpp  2022-06-21 17:12:14.838901412 +0200
-@@ -2152,8 +2152,7 @@
-        if (preview)    // results not available yet
-                paramValues = fitData.paramStartValues;
+--- a/src/backend/worksheet/plots/cartesian/XYFitCurve.cpp	2022-05-02 07:35:16.000000000 +0200
++++ b/src/backend/worksheet/plots/cartesian/XYFitCurve.cpp	2022-06-25 10:11:12.080051594 +0200
+@@ -642,6 +642,11 @@
+ 	}
+ }
  
--       SET_NUMBER_LOCALE
--       bool rc = parser->evaluateCartesian(fitData.model, numberLocale.toString(xRange.start()), numberLocale.toString(xRange.end()), (int)fitData.evaluatedPoints,
-+       bool rc = parser->evaluateCartesian(fitData.model, QString::number(xRange.start()), QString::number(xRange.end()), (int)fitData.evaluatedPoints,
-                                                xVector, yVector, fitData.paramNames, paramValues);
-        if (!rc) {
-                DEBUG(Q_FUNC_INFO << ", ERROR: Parsing fit function failed")
++void XYFitCurve::clearFitResult() {
++	Q_D(XYFitCurve);
++	d->fitResult = XYFitCurve::FitResult();
++}
++
+ /*!
+ 	Returns an icon to be used in the project explorer.
+ */
+@@ -2152,8 +2157,7 @@
+ 	if (preview)	// results not available yet
+ 		paramValues = fitData.paramStartValues;
+ 
+-	SET_NUMBER_LOCALE
+-	bool rc = parser->evaluateCartesian(fitData.model, numberLocale.toString(xRange.start()), numberLocale.toString(xRange.end()), (int)fitData.evaluatedPoints,
++	bool rc = parser->evaluateCartesian(fitData.model, QString::number(xRange.start()), QString::number(xRange.end()), (int)fitData.evaluatedPoints,
+ 						xVector, yVector, fitData.paramNames, paramValues);
+ 	if (!rc) {
+ 		DEBUG(Q_FUNC_INFO << ", ERROR: Parsing fit function failed")
+diff -ruNa a/src/backend/worksheet/plots/cartesian/XYFitCurve.h b/src/backend/worksheet/plots/cartesian/XYFitCurve.h
+--- a/src/backend/worksheet/plots/cartesian/XYFitCurve.h	2022-05-02 07:35:16.000000000 +0200
++++ b/src/backend/worksheet/plots/cartesian/XYFitCurve.h	2022-06-25 10:11:12.080051594 +0200
+@@ -104,10 +104,11 @@
+ 
+ 	void recalculate() override;
+ 	void evaluate(bool preview);
+-	void initFitData(XYAnalysisCurve::AnalysisAction);
+-	static void initFitData(XYFitCurve::FitData&);
+ 	void initStartValues(const XYCurve*);
+ 	static void initStartValues(XYFitCurve::FitData&, const XYCurve*);
++	void initFitData(XYAnalysisCurve::AnalysisAction);
++	static void initFitData(XYFitCurve::FitData&);
++	void clearFitResult();
+ 
+ 	QIcon icon() const override;
+ 	void save(QXmlStreamWriter*) const override;
+diff -ruNa a/src/kdefrontend/dockwidgets/XYFitCurveDock.cpp b/src/kdefrontend/dockwidgets/XYFitCurveDock.cpp
+--- a/src/kdefrontend/dockwidgets/XYFitCurveDock.cpp	2022-05-02 07:35:16.000000000 +0200
++++ b/src/kdefrontend/dockwidgets/XYFitCurveDock.cpp	2022-06-25 10:11:12.080051594 +0200
+@@ -865,15 +865,16 @@
+ }
+ 
+ /*!
+- * Show the preview pixmap of the fit model expression for the current model category and type.
+  * Called when the model type or the degree of the model were changed.
++ * Show the preview pixmap of the fit model expression for the current model category and type.
+  */
+ void XYFitCurveDock::updateModelEquation() {
+ 
+ 	if (m_fitData.modelCategory == nsl_fit_model_custom) {
+-		DEBUG("XYFitCurveDock::updateModelEquation() category = nsl_fit_model_custom, type = " << m_fitData.modelType);
++		DEBUG(Q_FUNC_INFO << ", category = nsl_fit_model_custom, type = " << m_fitData.modelType);
+ 	} else {
+-		DEBUG("XYFitCurveDock::updateModelEquation() category = " << nsl_fit_model_category_name[m_fitData.modelCategory] << ", type = " << m_fitData.modelType);
++		DEBUG(Q_FUNC_INFO << ", category = " << nsl_fit_model_category_name[m_fitData.modelCategory]
++																  << ", type = " << m_fitData.modelType);
+ 	}
+ 
+ 	//this function can also be called when the value for the degree was changed -> update the fit data structure
+@@ -885,6 +886,11 @@
+ 		XYFitCurve::initStartValues(m_fitData, m_curve);
+ 		// udpate parameter widget
+ 		fitParametersWidget->setFitData(&m_fitData);
++		// invalidate result
++		m_fitCurve->clearFitResult();
++		if (m_messageWidget)
++			m_messageWidget->close();
++		showFitResult();
+ 	}
+ 
+ 	// variables/parameter that are known
+@@ -1113,8 +1119,8 @@
+ 	this->showFitResult();
+ 	uiGeneralTab.pbRecalculate->setEnabled(false);
+ 
+-	//show the warning/error message, if available
+-	const XYFitCurve::FitResult& fitResult = m_fitCurve->fitResult();
++	// show the warning/error message, if available
++	const auto& fitResult = m_fitCurve->fitResult();
+ 	const QString& status = fitResult.status;
+ 	if (status != i18n("Success")) {
+ 		Q_EMIT info(i18n("Fit status: %1", fitResult.status));
+@@ -1312,7 +1318,7 @@
+ 	for (const auto &s : m_fitData.paramNamesUtf8)
+ 		sCorr += '\t' + s;
+ 	int index{0};
+-	DEBUG(Q_FUNC_INFO << ", correlation values size = " << fitResult.correlationMatrix.size())
++	DEBUG(Q_FUNC_INFO << ", correlation matrix size = " << fitResult.correlationMatrix.size())
+ 	for (int i = 0; i < np; i++) {
+ 		sCorr += '\n' + m_fitData.paramNamesUtf8.at(i);
+ 		for (int j = 0; j <= i; j++)
