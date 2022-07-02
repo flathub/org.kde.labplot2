@@ -1,3 +1,145 @@
+diff -ruNa a/src/backend/gsl/ExpressionParser.cpp b/src/backend/gsl/ExpressionParser.cpp
+--- a/src/backend/gsl/ExpressionParser.cpp	2022-05-02 07:35:16.000000000 +0200
++++ b/src/backend/gsl/ExpressionParser.cpp	2022-07-02 11:07:54.462720684 +0200
+@@ -1,11 +1,11 @@
+ /*
+-    File             : ExpressionParser.cpp
+-    Project          : LabPlot
+-    Description      : C++ wrapper for the bison generated parser.
+-    --------------------------------------------------------------------
+-    SPDX-FileCopyrightText: 2014 Alexander Semke <alexander.semke@web.de>
+-    SPDX-FileCopyrightText: 2014-2021 Stefan Gerlach <stefan.gerlach@uni.kn>
+-    SPDX-License-Identifier: GPL-2.0-or-later
++	File             : ExpressionParser.cpp
++	Project          : LabPlot
++	Description      : C++ wrapper for the bison generated parser.
++	--------------------------------------------------------------------
++	SPDX-FileCopyrightText: 2014 Alexander Semke <alexander.semke@web.de>
++	SPDX-FileCopyrightText: 2014-2022 Stefan Gerlach <stefan.gerlach@uni.kn>
++	SPDX-License-Identifier: GPL-2.0-or-later
+ */
+ 
+ 
+@@ -1460,14 +1460,16 @@
+ 
+ /*
+  * Evaluate cartesian expression returning true on success and false if parsing fails
++ * using given range
+  */
+-bool ExpressionParser::evaluateCartesian(const QString& expr, const QString& min, const QString& max,
+-		int count, QVector<double>* xVector, QVector<double>* yVector,
+-		const QStringList& paramNames, const QVector<double>& paramValues) {
+-	DEBUG(Q_FUNC_INFO << ", v1: range = " << STDSTRING(min) << " .. " << STDSTRING(max))
+-	gsl_set_error_handler_off();
+-
+-	const Range<double> range{min, max};
++bool ExpressionParser::evaluateCartesian(const QString& expr,
++										 const Range<double> range,
++										 int count,
++										 QVector<double>* xVector,
++										 QVector<double>* yVector,
++										 const QStringList& paramNames,
++										 const QVector<double>& paramValues) {
++	DEBUG(Q_FUNC_INFO << ", v0: range = " << range.toStdString())
+ 	const double step = range.stepSize(count);
+ 	DEBUG(Q_FUNC_INFO << ", range = " << range.toStdString() << ", step = " << step)
+ 
+@@ -1475,6 +1477,7 @@
+ 		assign_symbol(qPrintable(paramNames.at(i)), paramValues.at(i));
+ 
+ 	SET_NUMBER_LOCALE
++	gsl_set_error_handler_off();
+ 	for (int i = 0; i < count; i++) {
+ 		const double x{ range.start() + step * i };
+ 		assign_symbol("x", x);
+@@ -1494,6 +1497,23 @@
+ 
+ 	return true;
+ }
++/*
++ * Evaluate cartesian expression returning true on success and false if parsing fails
++ * min and max are localized strings which are parsed to support expressions like "pi + 1.5"
++ */
++bool ExpressionParser::evaluateCartesian(const QString& expr,
++										 const QString& min,
++										 const QString& max,
++										 int count,
++										 QVector<double>* xVector,
++										 QVector<double>* yVector,
++										 const QStringList& paramNames,
++										 const QVector<double>& paramValues) {
++	DEBUG(Q_FUNC_INFO << ", v1: range = " << STDSTRING(min) << " .. " << STDSTRING(max))
++
++	const Range<double> range{min, max};
++	return evaluateCartesian(expr, range, count, xVector, yVector, paramNames, paramValues);
++}
+ 
+ bool ExpressionParser::evaluateCartesian(const QString& expr, const QString& min, const QString& max,
+ 		int count, QVector<double>* xVector, QVector<double>* yVector) {
+diff -ruNa a/src/backend/gsl/ExpressionParser.h b/src/backend/gsl/ExpressionParser.h
+--- a/src/backend/gsl/ExpressionParser.h	2022-05-02 07:35:16.000000000 +0200
++++ b/src/backend/gsl/ExpressionParser.h	2022-07-02 11:07:54.462720684 +0200
+@@ -1,11 +1,11 @@
+ /*
+-    File             : ExpressionParser.h
+-    Project          : LabPlot
+-    Description      : c++ wrapper for the bison generated parser.
+-    --------------------------------------------------------------------
+-    SPDX-FileCopyrightText: 2014 Alexander Semke <alexander.semke@web.de>
+-    SPDX-FileCopyrightText: 2020 Stefan Gerlach <stefan.gerlach@uni.kn>
+-    SPDX-License-Identifier: GPL-2.0-or-later
++	File             : ExpressionParser.h
++	Project          : LabPlot
++	Description      : c++ wrapper for the bison generated parser.
++	--------------------------------------------------------------------
++	SPDX-FileCopyrightText: 2014 Alexander Semke <alexander.semke@web.de>
++	SPDX-FileCopyrightText: 2020-2022 Stefan Gerlach <stefan.gerlach@uni.kn>
++	SPDX-License-Identifier: GPL-2.0-or-later
+ */
+ 
+ 
+@@ -27,11 +27,22 @@
+ 
+ 	bool isValid(const QString& expr, const QStringList& vars);
+ 	QStringList getParameter(const QString& expr, const QStringList& vars);
+-	bool evaluateCartesian( const QString& expr, const QString& min, const QString& max,
+-					int count, QVector<double>* xVector, QVector<double>* yVector,
+-					const QStringList& paramNames, const QVector<double>& paramValues);
+-	bool evaluateCartesian(const QString& expr, const QString& min, const QString& max,
+-					int count, QVector<double>* xVector, QVector<double>* yVector);
++	bool evaluateCartesian(const QString& expr,
++						   Range<double> range,
++						   int count,
++						   QVector<double>* xVector,
++						   QVector<double>* yVector,
++						   const QStringList& paramNames,
++						   const QVector<double>& paramValues);
++	bool evaluateCartesian(const QString& expr,
++						   const QString& min,
++						   const QString& max,
++						   int count,
++						   QVector<double>* xVector,
++						   QVector<double>* yVector,
++						   const QStringList& paramNames,
++						   const QVector<double>& paramValues);
++	bool evaluateCartesian(const QString& expr, const QString& min, const QString& max, int count, QVector<double>* xVector, QVector<double>* yVector);
+ 	bool evaluateCartesian(const QString& expr, QVector<double>* xVector, QVector<double>* yVector);
+ 	bool evaluateCartesian(const QString& expr, QVector<double>* xVector, QVector<double>* yVector,
+ 					const QStringList& paramNames, const QVector<double>& paramValues);
+diff -ruNa a/src/backend/lib/Range.h b/src/backend/lib/Range.h
+--- a/src/backend/lib/Range.h	2022-05-02 07:35:16.000000000 +0200
++++ b/src/backend/lib/Range.h	2022-07-02 11:07:54.462720684 +0200
+@@ -57,8 +57,8 @@
+ 	Range(T start, T end, Format format = Format::Numeric, Scale scale = Scale::Linear) {
+ 		this->setRange(start, end, format, scale);
+ 	}
+-	Range(const QString& start, const QString& end, const Format format = Format::Numeric,
+-	      const Scale scale = Scale::Linear) {
++	// start and end as localized strings like "pi + 1.5" (will be parsed)
++	Range(const QString& start, const QString& end, const Format format = Format::Numeric, const Scale scale = Scale::Linear) {
+ 		SET_NUMBER_LOCALE
+ 		// min
+ 		double min = parse(qPrintable(start.simplified()), qPrintable(numberLocale.name()));
 diff -ruNa a/src/backend/worksheet/plots/cartesian/XYCurve.cpp b/src/backend/worksheet/plots/cartesian/XYCurve.cpp
 --- a/src/backend/worksheet/plots/cartesian/XYCurve.cpp	2022-05-02 07:35:16.000000000 +0200
 +++ b/src/backend/worksheet/plots/cartesian/XYCurve.cpp	2022-06-18 13:12:58.340448549 +0200
@@ -62,9 +204,38 @@ diff -ruNa a/src/backend/worksheet/plots/cartesian/XYCurve.cpp b/src/backend/wor
  		const int w{fm.boundingRect(string).width()};
  		const double x{m_scenePoints.at(i).x()};
  		const double y{m_scenePoints.at(i).y()};
+diff -ruNa a/src/backend/worksheet/plots/cartesian/XYEquationCurve.h b/src/backend/worksheet/plots/cartesian/XYEquationCurve.h
+--- a/src/backend/worksheet/plots/cartesian/XYEquationCurve.h	2022-05-02 07:35:16.000000000 +0200
++++ b/src/backend/worksheet/plots/cartesian/XYEquationCurve.h	2022-07-02 11:07:54.462720684 +0200
+@@ -31,7 +31,7 @@
+ 		EquationType type{EquationType::Cartesian};
+ 		QString expression1;
+ 		QString expression2;
+-		QString min;
++		QString min;	// localized strings to support expressions
+ 		QString max;
+ 		int count{1000};
+ 	};
 diff -ruNa a/src/backend/worksheet/plots/cartesian/XYFitCurve.cpp b/src/backend/worksheet/plots/cartesian/XYFitCurve.cpp
 --- a/src/backend/worksheet/plots/cartesian/XYFitCurve.cpp	2022-05-02 07:35:16.000000000 +0200
-+++ b/src/backend/worksheet/plots/cartesian/XYFitCurve.cpp	2022-06-25 10:11:12.080051594 +0200
++++ b/src/backend/worksheet/plots/cartesian/XYFitCurve.cpp	2022-07-02 11:07:54.462720684 +0200
+@@ -1,10 +1,10 @@
+ /*
+-    File                 : XYFitCurve.cpp
+-    Project              : LabPlot
+-    Description          : A xy-curve defined by a fit model
+-    --------------------------------------------------------------------
+-    SPDX-FileCopyrightText: 2014-2021 Alexander Semke <alexander.semke@web.de>
+-    SPDX-FileCopyrightText: 2016-2021 Stefan Gerlach <stefan.gerlach@uni.kn>
++	File                 : XYFitCurve.cpp
++	Project              : LabPlot
++	Description          : A xy-curve defined by a fit model
++	--------------------------------------------------------------------
++	SPDX-FileCopyrightText: 2014-2021 Alexander Semke <alexander.semke@web.de>
++	SPDX-FileCopyrightText: 2016-2022 Stefan Gerlach <stefan.gerlach@uni.kn>
+ 
+     SPDX-License-Identifier: GPL-2.0-or-later
+ */
 @@ -642,6 +642,11 @@
  	}
  }
@@ -77,16 +248,32 @@ diff -ruNa a/src/backend/worksheet/plots/cartesian/XYFitCurve.cpp b/src/backend/
  /*!
  	Returns an icon to be used in the project explorer.
  */
-@@ -2152,8 +2157,7 @@
+@@ -2143,7 +2148,7 @@
+ 		if (!fitData.evalRange.isZero()) 	// avoid zero range
+ 			xRange = fitData.evalRange;
+ 	}
+-	DEBUG(Q_FUNC_INFO << ", eval range = " << STDSTRING(xRange.toString()));
++	DEBUG(Q_FUNC_INFO << ", eval range = " << xRange.toStdString());
+ 	xVector->resize((int)fitData.evaluatedPoints);
+ 	yVector->resize((int)fitData.evaluatedPoints);
+ 	DEBUG(Q_FUNC_INFO << ", vector size = " << xVector->size());
+@@ -2152,9 +2157,13 @@
  	if (preview)	// results not available yet
  		paramValues = fitData.paramStartValues;
  
 -	SET_NUMBER_LOCALE
 -	bool rc = parser->evaluateCartesian(fitData.model, numberLocale.toString(xRange.start()), numberLocale.toString(xRange.end()), (int)fitData.evaluatedPoints,
-+	bool rc = parser->evaluateCartesian(fitData.model, QString::number(xRange.start()), QString::number(xRange.end()), (int)fitData.evaluatedPoints,
- 						xVector, yVector, fitData.paramNames, paramValues);
+-						xVector, yVector, fitData.paramNames, paramValues);
++	bool rc = parser->evaluateCartesian(fitData.model,
++										xRange,
++										(int)fitData.evaluatedPoints,
++										xVector,
++										yVector,
++										fitData.paramNames,
++										paramValues);
  	if (!rc) {
  		DEBUG(Q_FUNC_INFO << ", ERROR: Parsing fit function failed")
+ 		xVector->clear();
 diff -ruNa a/src/backend/worksheet/plots/cartesian/XYFitCurve.h b/src/backend/worksheet/plots/cartesian/XYFitCurve.h
 --- a/src/backend/worksheet/plots/cartesian/XYFitCurve.h	2022-05-02 07:35:16.000000000 +0200
 +++ b/src/backend/worksheet/plots/cartesian/XYFitCurve.h	2022-06-25 10:11:12.080051594 +0200
@@ -159,3 +346,25 @@ diff -ruNa a/src/kdefrontend/dockwidgets/XYFitCurveDock.cpp b/src/kdefrontend/do
  	for (int i = 0; i < np; i++) {
  		sCorr += '\n' + m_fitData.paramNamesUtf8.at(i);
  		for (int j = 0; j <= i; j++)
+diff -ruNa a/src/kdefrontend/widgets/FitOptionsWidget.cpp b/src/kdefrontend/widgets/FitOptionsWidget.cpp
+--- a/src/kdefrontend/widgets/FitOptionsWidget.cpp	2022-05-02 07:35:16.000000000 +0200
++++ b/src/kdefrontend/widgets/FitOptionsWidget.cpp	2022-07-02 11:07:54.466720663 +0200
+@@ -1,11 +1,11 @@
+ /*
+-    File                 : FitOptionsWidget.cc
+-    Project              : LabPlot
+-    Description          : widget for editing advanced fit options
+-    --------------------------------------------------------------------
+-    SPDX-FileCopyrightText: 2014-2020 Alexander Semke <alexander.semke@web.de>
+-    SPDX-FileCopyrightText: 2017-2018 Stefan Gerlach <stefan.gerlach@uni.kn>
+-    SPDX-License-Identifier: GPL-2.0-or-later
++	File                 : FitOptionsWidget.cpp
++	Project              : LabPlot
++	Description          : widget for editing advanced fit options
++	--------------------------------------------------------------------
++	SPDX-FileCopyrightText: 2014-2020 Alexander Semke <alexander.semke@web.de>
++	SPDX-FileCopyrightText: 2017-2018 Stefan Gerlach <stefan.gerlach@uni.kn>
++	SPDX-License-Identifier: GPL-2.0-or-later
+ */
+ 
+ #include "FitOptionsWidget.h"
