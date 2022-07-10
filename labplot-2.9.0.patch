@@ -128,7 +128,7 @@ diff -ruNa a/src/backend/gsl/ExpressionParser.h b/src/backend/gsl/ExpressionPars
  					const QStringList& paramNames, const QVector<double>& paramValues);
 diff -ruNa a/src/backend/lib/Range.h b/src/backend/lib/Range.h
 --- a/src/backend/lib/Range.h	2022-05-02 07:35:16.000000000 +0200
-+++ b/src/backend/lib/Range.h	2022-07-02 11:07:54.462720684 +0200
++++ b/src/backend/lib/Range.h	2022-07-11 00:21:09.148454695 +0200
 @@ -57,8 +57,8 @@
  	Range(T start, T end, Format format = Format::Numeric, Scale scale = Scale::Linear) {
  		this->setRange(start, end, format, scale);
@@ -140,6 +140,191 @@ diff -ruNa a/src/backend/lib/Range.h b/src/backend/lib/Range.h
  		SET_NUMBER_LOCALE
  		// min
  		double min = parse(qPrintable(start.simplified()), qPrintable(numberLocale.name()));
+@@ -135,8 +135,8 @@
+ 		if (m_format == Format::Numeric)
+ 			return locale.toString(m_start) + " .. " + locale.toString(m_end);
+ 		else
+-			return QDateTime::fromMSecsSinceEpoch(m_start).toString(m_dateTimeFormat) + " .. "
+-				+ QDateTime::fromMSecsSinceEpoch(m_end).toString(m_dateTimeFormat);
++			return QDateTime::fromMSecsSinceEpoch(m_start, Qt::UTC).toString(m_dateTimeFormat) + " .. "
++				+ QDateTime::fromMSecsSinceEpoch(m_end, Qt::UTC).toString(m_dateTimeFormat);
+ 	}
+ 	std::string toStdString() const { return STDSTRING(toString()); }
+ 	//! Return a string in the format 'start .. end' and uses number locale
+@@ -354,8 +354,8 @@
+ 		} else
+ 			return locale.toString(m_start, 'g', 12) + QLatin1String(" .. ") + locale.toString(m_end, 'g', 12);
+ 	} else
+-		return QDateTime::fromMSecsSinceEpoch(m_start).toString(m_dateTimeFormat) + QLatin1String(" .. ") +
+-			QDateTime::fromMSecsSinceEpoch(m_end).toString(m_dateTimeFormat);
++		return QDateTime::fromMSecsSinceEpoch(m_start, Qt::UTC).toString(m_dateTimeFormat) + QLatin1String(" .. ")
++			+ QDateTime::fromMSecsSinceEpoch(m_end, Qt::UTC).toString(m_dateTimeFormat);
+ }
+ 
+ #endif
+diff -ruNa a/src/backend/worksheet/plots/cartesian/Axis.cpp b/src/backend/worksheet/plots/cartesian/Axis.cpp
+--- a/src/backend/worksheet/plots/cartesian/Axis.cpp	2022-05-02 07:35:16.000000000 +0200
++++ b/src/backend/worksheet/plots/cartesian/Axis.cpp	2022-07-11 00:21:09.152454657 +0200
+@@ -1840,6 +1840,7 @@
+ 	} else if (datetime) {
+ 		for (const auto value : tickLabelValues) {
+ 			QDateTime dateTime;
++			dateTime.setTimeSpec(Qt::UTC);
+ 			dateTime.setMSecsSinceEpoch(value);
+ 			str = dateTime.toString(labelsDateTimeFormat);
+ 			str = labelsPrefix + str + labelsSuffix;
+@@ -2258,6 +2259,8 @@
+ 	//TODO: mapping should work without SuppressPageClipping-flag, check float comparisons in the map-function.
+ 	//Currently, grid lines disappear sometimes without this flag
+ 	QVector<QPointF> logicalMajorTickPoints = q->cSystem->mapSceneToLogical(majorTickPoints, AbstractCoordinateSystem::MappingFlag::SuppressPageClipping);
++	// for (auto p : logicalMajorTickPoints)
++	//	QDEBUG(Q_FUNC_INFO << ", logical major tick: " << QString::number(p.x(), 'g', 12) << " = " << QDateTime::fromMSecsSinceEpoch(p.x(), Qt::UTC))
+ 
+ 	if (logicalMajorTickPoints.isEmpty())
+ 		return;
+@@ -2690,24 +2693,24 @@
+ 	writeBasicAttributes(writer);
+ 	writeCommentElement(writer);
+ 
+-	//general
+-	writer->writeStartElement( "general" );
+-	writer->writeAttribute( "rangeType", QString::number(static_cast<int>(d->rangeType)) );
+-	writer->writeAttribute( "orientation", QString::number(static_cast<int>(d->orientation)) );
+-	writer->writeAttribute( "position", QString::number(static_cast<int>(d->position)) );
+-	writer->writeAttribute( "scale", QString::number(static_cast<int>(d->scale)) );
+-	writer->writeAttribute( "offset", QString::number(d->offset) );
+-	writer->writeAttribute( "logicalPosition", QString::number(d->logicalPosition) );
+-	writer->writeAttribute( "start", QString::number(d->range.start()) );
+-	writer->writeAttribute( "end", QString::number(d->range.end()) );
+-	writer->writeAttribute( "majorTickStartOffset", QString::number(d->majorTickStartOffset) );
+-	writer->writeAttribute( "scalingFactor", QString::number(d->scalingFactor) );
+-	writer->writeAttribute( "zeroOffset", QString::number(d->zeroOffset) );
+-	writer->writeAttribute( "showScaleOffset", QString::number(d->showScaleOffset) );
+-	writer->writeAttribute( "titleOffsetX", QString::number(d->titleOffsetX) );
+-	writer->writeAttribute( "titleOffsetY", QString::number(d->titleOffsetY) );
+-	writer->writeAttribute( "plotRangeIndex", QString::number(m_cSystemIndex) );
+-	writer->writeAttribute( "visible", QString::number(d->isVisible()) );
++	// general
++	writer->writeStartElement("general");
++	writer->writeAttribute("rangeType", QString::number(static_cast<int>(d->rangeType)));
++	writer->writeAttribute("orientation", QString::number(static_cast<int>(d->orientation)));
++	writer->writeAttribute("position", QString::number(static_cast<int>(d->position)));
++	writer->writeAttribute("scale", QString::number(static_cast<int>(d->scale)));
++	writer->writeAttribute("offset", QString::number(d->offset));
++	writer->writeAttribute("logicalPosition", QString::number(d->logicalPosition));
++	writer->writeAttribute("start", QString::number(d->range.start(), 'g', 12));
++	writer->writeAttribute("end", QString::number(d->range.end(), 'g', 12));
++	writer->writeAttribute("majorTickStartOffset", QString::number(d->majorTickStartOffset));
++	writer->writeAttribute("scalingFactor", QString::number(d->scalingFactor));
++	writer->writeAttribute("zeroOffset", QString::number(d->zeroOffset));
++	writer->writeAttribute("showScaleOffset", QString::number(d->showScaleOffset));
++	writer->writeAttribute("titleOffsetX", QString::number(d->titleOffsetX));
++	writer->writeAttribute("titleOffsetY", QString::number(d->titleOffsetY));
++	writer->writeAttribute("plotRangeIndex", QString::number(m_cSystemIndex));
++	writer->writeAttribute("visible", QString::number(d->isVisible()));
+ 	writer->writeEndElement();
+ 
+ 	//label
+diff -ruNa a/src/backend/worksheet/plots/cartesian/CartesianPlot.cpp b/src/backend/worksheet/plots/cartesian/CartesianPlot.cpp
+--- a/src/backend/worksheet/plots/cartesian/CartesianPlot.cpp	2022-05-02 07:35:16.000000000 +0200
++++ b/src/backend/worksheet/plots/cartesian/CartesianPlot.cpp	2022-07-11 00:21:09.156454618 +0200
+@@ -4459,15 +4459,17 @@
+ 		if (xRangeFormat == RangeT::Format::Numeric)
+ 			info = QString::fromUtf8("Δx=") + QString::number(logicalEnd.x()-logicalStart.x());
+ 		else
+-			info = i18n("from x=%1 to x=%2", QDateTime::fromMSecsSinceEpoch(logicalStart.x()).toString(xRangeDateTimeFormat),
+-						QDateTime::fromMSecsSinceEpoch(logicalEnd.x()).toString(xRangeDateTimeFormat));
++			info = i18n("from x=%1 to x=%2",
++						QDateTime::fromMSecsSinceEpoch(logicalStart.x(), Qt::UTC).toString(xRangeDateTimeFormat),
++						QDateTime::fromMSecsSinceEpoch(logicalEnd.x(), Qt::UTC).toString(xRangeDateTimeFormat));
+ 
+ 		info += QLatin1String(", ");
+ 		if (yRangeFormat == RangeT::Format::Numeric)
+ 			info += QString::fromUtf8("Δy=") + QString::number(logicalEnd.y()-logicalStart.y());
+ 		else
+-			info += i18n("from y=%1 to y=%2", QDateTime::fromMSecsSinceEpoch(logicalStart.y()).toString(xRangeDateTimeFormat),
+-						 QDateTime::fromMSecsSinceEpoch(logicalEnd.y()).toString(xRangeDateTimeFormat));
++			info += i18n("from y=%1 to y=%2",
++						 QDateTime::fromMSecsSinceEpoch(logicalStart.y(), Qt::UTC).toString(xRangeDateTimeFormat),
++						 QDateTime::fromMSecsSinceEpoch(logicalEnd.y(), Qt::UTC).toString(xRangeDateTimeFormat));
+ 	} else if (mouseMode == CartesianPlot::MouseMode::ZoomXSelection) {
+ 		logicalPos.setY(yRange(yIndex).start()); // must be done, because the other plots can have other ranges, value must be in the scenes
+ 		bool visible;
+@@ -4477,8 +4479,9 @@
+ 	if (xRangeFormat == RangeT::Format::Numeric)
+ 			info = QString::fromUtf8("Δx=") + QString::number(logicalEnd.x()-logicalStart.x());
+ 		else
+-			info = i18n("from x=%1 to x=%2", QDateTime::fromMSecsSinceEpoch(logicalStart.x()).toString(xRangeDateTimeFormat),
+-						QDateTime::fromMSecsSinceEpoch(logicalEnd.x()).toString(xRangeDateTimeFormat));
++			info = i18n("from x=%1 to x=%2",
++						QDateTime::fromMSecsSinceEpoch(logicalStart.x(), Qt::UTC).toString(xRangeDateTimeFormat),
++						QDateTime::fromMSecsSinceEpoch(logicalEnd.x(), Qt::UTC).toString(xRangeDateTimeFormat));
+ 	} else if (mouseMode == CartesianPlot::MouseMode::ZoomYSelection) {
+ 		m_selectionEnd.setX(dataRect.right());
+ 		logicalPos.setX(xRange(xIndex).start()); // must be done, because the other plots can have other ranges, value must be in the scenes
+@@ -4488,8 +4491,9 @@
+ 		if (yRangeFormat == RangeT::Format::Numeric)
+ 			info = QString::fromUtf8("Δy=") + QString::number(logicalEnd.y()-logicalStart.y());
+ 		else
+-			info = i18n("from y=%1 to y=%2", QDateTime::fromMSecsSinceEpoch(logicalStart.y()).toString(xRangeDateTimeFormat),
+-						QDateTime::fromMSecsSinceEpoch(logicalEnd.y()).toString(xRangeDateTimeFormat));
++			info = i18n("from y=%1 to y=%2",
++						QDateTime::fromMSecsSinceEpoch(logicalStart.y(), Qt::UTC).toString(xRangeDateTimeFormat),
++						QDateTime::fromMSecsSinceEpoch(logicalEnd.y(), Qt::UTC).toString(xRangeDateTimeFormat));
+ 	}
+ 	q->info(info);
+ 	update();
+@@ -4506,7 +4510,7 @@
+ 	if (xRangeFormat == RangeT::Format::Numeric)
+ 		info = QString::fromUtf8("x=") + QString::number(logicalPos.x());
+ 	else
+-		info = i18n("x=%1", QDateTime::fromMSecsSinceEpoch(logicalPos.x()).toString(xRangeDateTimeFormat));
++		info = i18n("x=%1", QDateTime::fromMSecsSinceEpoch(logicalPos.x(), Qt::UTC).toString(xRangeDateTimeFormat));
+ 	q->info(info);
+ 	update();
+ }
+@@ -4765,13 +4769,13 @@
+ 			if (xRangeFormat == RangeT::Format::Numeric)
+ 				 info += QString::number(logicalPoint.x());
+ 			else
+-				info += QDateTime::fromMSecsSinceEpoch(logicalPoint.x()).toString(xRangeDateTimeFormat);
++				info += QDateTime::fromMSecsSinceEpoch(logicalPoint.x(), Qt::UTC).toString(xRangeDateTimeFormat);
+ 
+ 			info += ", y=";
+ 			if (yRangeFormat == RangeT::Format::Numeric)
+ 				info += QString::number(logicalPoint.y());
+ 			else
+-				info += QDateTime::fromMSecsSinceEpoch(logicalPoint.y()).toString(yRangeDateTimeFormat);
++				info += QDateTime::fromMSecsSinceEpoch(logicalPoint.y(), Qt::UTC).toString(yRangeDateTimeFormat);
+ 		}
+ 
+ 		if (mouseMode == CartesianPlot::MouseMode::ZoomSelection && !m_selectionBandIsShown) {
+@@ -4781,14 +4785,14 @@
+ 			if (xRangeFormat == RangeT::Format::Numeric)
+ 				 info += QString::number(logicalPoint.x());
+ 			else
+-				info += QDateTime::fromMSecsSinceEpoch(logicalPoint.x()).toString(xRangeDateTimeFormat);
++				info += QDateTime::fromMSecsSinceEpoch(logicalPoint.x(), Qt::UTC).toString(xRangeDateTimeFormat);
+ 			Q_EMIT q->mouseHoverZoomSelectionModeSignal(logicalPoint);
+ 		} else if (mouseMode == CartesianPlot::MouseMode::ZoomYSelection && !m_selectionBandIsShown) {
+ 			info = "y=";
+ 			if (yRangeFormat == RangeT::Format::Numeric)
+ 				info += QString::number(logicalPoint.y());
+ 			else
+-				info += QDateTime::fromMSecsSinceEpoch(logicalPoint.y()).toString(yRangeDateTimeFormat);
++				info += QDateTime::fromMSecsSinceEpoch(logicalPoint.y(), Qt::UTC).toString(yRangeDateTimeFormat);
+ 			Q_EMIT q->mouseHoverZoomSelectionModeSignal(logicalPoint);
+ 		} else if (mouseMode == CartesianPlot::MouseMode::Selection) {
+ 			// hover the nearest curve to the mousepointer
+@@ -4817,7 +4821,7 @@
+ 			if (yRangeFormat == RangeT::Format::Numeric)
+ 				info += QString::number(logicalPoint.x());
+ 			else
+-				info += QDateTime::fromMSecsSinceEpoch(logicalPoint.x()).toString(xRangeDateTimeFormat);
++				info += QDateTime::fromMSecsSinceEpoch(logicalPoint.x(), Qt::UTC).toString(xRangeDateTimeFormat);
+ 
+ 			double cursorPenWidth2 = cursorPen.width()/2.;
+ 			if (cursorPenWidth2 < 10.)
 diff -ruNa a/src/backend/worksheet/plots/cartesian/XYCurve.cpp b/src/backend/worksheet/plots/cartesian/XYCurve.cpp
 --- a/src/backend/worksheet/plots/cartesian/XYCurve.cpp	2022-05-02 07:35:16.000000000 +0200
 +++ b/src/backend/worksheet/plots/cartesian/XYCurve.cpp	2022-06-18 13:12:58.340448549 +0200
@@ -293,7 +478,7 @@ diff -ruNa a/src/backend/worksheet/plots/cartesian/XYFitCurve.h b/src/backend/wo
  	void save(QXmlStreamWriter*) const override;
 diff -ruNa a/src/kdefrontend/dockwidgets/CartesianPlotDock.cpp b/src/kdefrontend/dockwidgets/CartesianPlotDock.cpp
 --- a/src/kdefrontend/dockwidgets/CartesianPlotDock.cpp	2022-05-02 07:35:16.000000000 +0200
-+++ b/src/kdefrontend/dockwidgets/CartesianPlotDock.cpp	2022-07-10 21:08:19.602301532 +0200
++++ b/src/kdefrontend/dockwidgets/CartesianPlotDock.cpp	2022-07-11 00:21:09.160454579 +0200
 @@ -517,7 +517,7 @@
  
  			} else {
@@ -303,6 +488,138 @@ diff -ruNa a/src/kdefrontend/dockwidgets/CartesianPlotDock.cpp b/src/kdefrontend
  				auto* dte = qobject_cast<QDateTimeEdit*>(ui.twXRanges->cellWidget(row, TwRangesColumn::Min));
  				if (dte)
  					isDateTime = true;
+@@ -547,8 +547,8 @@
+ 				CELLWIDGET(twYRanges, row, TwRangesColumn::Max, QLineEdit, setText(numberLocale.toString(yRange.end(), 'g', relPrec)));
+ 				le->setCursorPosition(pos);
+ 			} else {
+-				CELLWIDGET(twYRanges, row, TwRangesColumn::Min, QDateTimeEdit, setDateTime( QDateTime::fromMSecsSinceEpoch(yRange.start())));
+-				CELLWIDGET(twYRanges, row, TwRangesColumn::Max, QDateTimeEdit, setDateTime( QDateTime::fromMSecsSinceEpoch(yRange.end())));
++				CELLWIDGET(twYRanges, row, TwRangesColumn::Min, QDateTimeEdit, setDateTime(QDateTime::fromMSecsSinceEpoch(yRange.start(), Qt::UTC)));
++				CELLWIDGET(twYRanges, row, TwRangesColumn::Max, QDateTimeEdit, setDateTime(QDateTime::fromMSecsSinceEpoch(yRange.end(), Qt::UTC)));
+ 				auto* dte = qobject_cast<QDateTimeEdit*>(ui.twYRanges->cellWidget(row, TwRangesColumn::Min));
+ 				if (dte)
+ 					isDateTime = true;
+@@ -668,15 +668,17 @@
+ 			connect(le, &QLineEdit::textChanged, this, &CartesianPlotDock::xMaxChanged);
+ 		} else {
+ 			auto* dte = new QDateTimeEdit(ui.twXRanges);
+-			dte->setDisplayFormat( m_plot->xRangeDateTimeFormat(i) );
+-			dte->setDateTime(QDateTime::fromMSecsSinceEpoch(xRange.start()));
++			dte->setDisplayFormat(m_plot->xRangeDateTimeFormat(i));
++			dte->setTimeSpec(Qt::UTC);
++			dte->setDateTime(QDateTime::fromMSecsSinceEpoch(xRange.start(), Qt::UTC));
+ 			dte->setWrapping(true);
+ 			ui.twXRanges->setCellWidget(i, TwRangesColumn::Min, dte);
+ 			dte->setProperty("row", i);
+ 			connect(dte, &QDateTimeEdit::dateTimeChanged, this, &CartesianPlotDock::xMinDateTimeChanged);
+ 			dte = new QDateTimeEdit(ui.twXRanges);
+-			dte->setDisplayFormat( m_plot->xRangeDateTimeFormat(i) );
+-			dte->setDateTime(QDateTime::fromMSecsSinceEpoch(xRange.end()));
++			dte->setDisplayFormat(m_plot->xRangeDateTimeFormat(i));
++			dte->setTimeSpec(Qt::UTC);
++			dte->setDateTime(QDateTime::fromMSecsSinceEpoch(xRange.end(), Qt::UTC));
+ 			dte->setWrapping(true);
+ 			ui.twXRanges->setCellWidget(i, TwRangesColumn::Max, dte);
+ 			dte->setProperty("row", i);
+@@ -761,15 +763,17 @@
+ 			connect(le, &QLineEdit::textChanged, this, &CartesianPlotDock::yMaxChanged);
+ 		} else {
+ 			auto* dte = new QDateTimeEdit(ui.twYRanges);
+-			dte->setDisplayFormat( m_plot->yRangeDateTimeFormat(i) );
+-			dte->setDateTime(QDateTime::fromMSecsSinceEpoch(m_plot->yRange(i).start()));
++			dte->setDisplayFormat(m_plot->yRangeDateTimeFormat(i));
++			dte->setTimeSpec(Qt::UTC);
++			dte->setDateTime(QDateTime::fromMSecsSinceEpoch(m_plot->yRange(i).start(), Qt::UTC));
+ 			dte->setWrapping(true);
+ 			ui.twYRanges->setCellWidget(i, TwRangesColumn::Min, dte);
+ 			dte->setProperty("row", i);
+ 			connect(dte, &QDateTimeEdit::dateTimeChanged, this, &CartesianPlotDock::yMinDateTimeChanged);
+ 			dte = new QDateTimeEdit(ui.twYRanges);
+-			dte->setDisplayFormat( m_plot->yRangeDateTimeFormat(i) );
+-			dte->setDateTime(QDateTime::fromMSecsSinceEpoch(m_plot->yRange(i).end()));
++			dte->setDisplayFormat(m_plot->yRangeDateTimeFormat(i));
++			dte->setTimeSpec(Qt::UTC);
++			dte->setDateTime(QDateTime::fromMSecsSinceEpoch(m_plot->yRange(i).end(), Qt::UTC));
+ 			dte->setWrapping(true);
+ 			ui.twYRanges->setCellWidget(i, TwRangesColumn::Max, dte);
+ 			dte->setProperty("row", i);
+@@ -2248,7 +2252,7 @@
+ 	const Lock lock(m_initializing);
+ 	SET_NUMBER_LOCALE
+ 	CELLWIDGET(twXRanges, xRangeIndex, TwRangesColumn::Min, QLineEdit, setText(numberLocale.toString(value)));
+-	CELLWIDGET(twXRanges, xRangeIndex, TwRangesColumn::Min, QDateTimeEdit, setDateTime(QDateTime::fromMSecsSinceEpoch(value)));
++	CELLWIDGET(twXRanges, xRangeIndex, TwRangesColumn::Min, QDateTimeEdit, setDateTime(QDateTime::fromMSecsSinceEpoch(value, Qt::UTC)));
+ }
+ void CartesianPlotDock::plotYMinChanged(int yRangeIndex, double value) {
+ 	DEBUG(Q_FUNC_INFO << ", value = " << value)
+@@ -2257,7 +2261,7 @@
+ 	const Lock lock(m_initializing);
+ 	SET_NUMBER_LOCALE
+ 	CELLWIDGET(twYRanges, yRangeIndex, TwRangesColumn::Min, QLineEdit, setText(numberLocale.toString(value)));
+-	CELLWIDGET(twYRanges, yRangeIndex, TwRangesColumn::Min, QDateTimeEdit, setDateTime(QDateTime::fromMSecsSinceEpoch(value)));
++	CELLWIDGET(twYRanges, yRangeIndex, TwRangesColumn::Min, QDateTimeEdit, setDateTime(QDateTime::fromMSecsSinceEpoch(value, Qt::UTC)));
+ }
+ 
+ void CartesianPlotDock::plotXMaxChanged(int xRangeIndex, double value) {
+@@ -2267,7 +2271,7 @@
+ 	const Lock lock(m_initializing);
+ 	SET_NUMBER_LOCALE
+ 	CELLWIDGET(twXRanges, xRangeIndex, TwRangesColumn::Max, QLineEdit, setText(numberLocale.toString(value)));
+-	CELLWIDGET(twXRanges, xRangeIndex, TwRangesColumn::Max, QDateTimeEdit, setDateTime(QDateTime::fromMSecsSinceEpoch(value)));
++	CELLWIDGET(twXRanges, xRangeIndex, TwRangesColumn::Max, QDateTimeEdit, setDateTime(QDateTime::fromMSecsSinceEpoch(value, Qt::UTC)));
+ }
+ void CartesianPlotDock::plotYMaxChanged(int yRangeIndex, double value) {
+ 	DEBUG(Q_FUNC_INFO << ", value = " << value)
+@@ -2276,7 +2280,7 @@
+ 	const Lock lock(m_initializing);
+ 	SET_NUMBER_LOCALE
+ 	CELLWIDGET(twYRanges, yRangeIndex, TwRangesColumn::Max, QLineEdit, setText(numberLocale.toString(value)));
+-	CELLWIDGET(twYRanges, yRangeIndex, TwRangesColumn::Max, QDateTimeEdit, setDateTime(QDateTime::fromMSecsSinceEpoch(value)));
++	CELLWIDGET(twYRanges, yRangeIndex, TwRangesColumn::Max, QDateTimeEdit, setDateTime(QDateTime::fromMSecsSinceEpoch(value, Qt::UTC)));
+ }
+ 
+ void CartesianPlotDock::plotXRangeChanged(int xRangeIndex, Range<double> range) {
+@@ -2287,9 +2291,9 @@
+ 	const Lock lock(m_initializing);
+ 	SET_NUMBER_LOCALE
+ 	CELLWIDGET(twXRanges, xRangeIndex, TwRangesColumn::Min, QLineEdit, setText(numberLocale.toString(range.start())));
+-	CELLWIDGET(twXRanges, xRangeIndex, TwRangesColumn::Min, QDateTimeEdit, setDateTime(QDateTime::fromMSecsSinceEpoch(range.start())));
++	CELLWIDGET(twXRanges, xRangeIndex, TwRangesColumn::Min, QDateTimeEdit, setDateTime(QDateTime::fromMSecsSinceEpoch(range.start(), Qt::UTC)));
+ 	CELLWIDGET(twXRanges, xRangeIndex, TwRangesColumn::Max, QLineEdit, setText(numberLocale.toString(range.end())));
+-	CELLWIDGET(twXRanges, xRangeIndex, TwRangesColumn::Max, QDateTimeEdit, setDateTime(QDateTime::fromMSecsSinceEpoch(range.end())));
++	CELLWIDGET(twXRanges, xRangeIndex, TwRangesColumn::Max, QDateTimeEdit, setDateTime(QDateTime::fromMSecsSinceEpoch(range.end(), Qt::UTC)));
+ }
+ void CartesianPlotDock::plotYRangeChanged(int yRangeIndex, Range<double> range) {
+ 	DEBUG(Q_FUNC_INFO)
+@@ -2299,9 +2303,9 @@
+ 	const Lock lock(m_initializing);
+ 	SET_NUMBER_LOCALE
+ 	CELLWIDGET(twYRanges, yRangeIndex, TwRangesColumn::Min, QLineEdit, setText(numberLocale.toString(range.start())));
+-	CELLWIDGET(twYRanges, yRangeIndex, TwRangesColumn::Min, QDateTimeEdit, setDateTime(QDateTime::fromMSecsSinceEpoch(range.start())));
++	CELLWIDGET(twYRanges, yRangeIndex, TwRangesColumn::Min, QDateTimeEdit, setDateTime(QDateTime::fromMSecsSinceEpoch(range.start(), Qt::UTC)));
+ 	CELLWIDGET(twYRanges, yRangeIndex, TwRangesColumn::Max, QLineEdit, setText(numberLocale.toString(range.end())));
+-	CELLWIDGET(twYRanges, yRangeIndex, TwRangesColumn::Max, QDateTimeEdit, setDateTime(QDateTime::fromMSecsSinceEpoch(range.end())));
++	CELLWIDGET(twYRanges, yRangeIndex, TwRangesColumn::Max, QDateTimeEdit, setDateTime(QDateTime::fromMSecsSinceEpoch(range.end(), Qt::UTC)));
+ }
+ 
+ void CartesianPlotDock::plotXScaleChanged(int xRangeIndex, RangeT::Scale scale) {
+diff -ruNa a/src/kdefrontend/dockwidgets/CartesianPlotDock.cpp.rej b/src/kdefrontend/dockwidgets/CartesianPlotDock.cpp.rej
+--- a/src/kdefrontend/dockwidgets/CartesianPlotDock.cpp.rej	1970-01-01 01:00:00.000000000 +0100
++++ b/src/kdefrontend/dockwidgets/CartesianPlotDock.cpp.rej	2022-07-11 00:21:09.160454579 +0200
+@@ -0,0 +1,13 @@
++--- src/kdefrontend/dockwidgets/CartesianPlotDock.cpp
+++++ src/kdefrontend/dockwidgets/CartesianPlotDock.cpp
++@@ -516,8 +516,8 @@ void CartesianPlotDock::updateLocale() {
++ 				le->setCursorPosition(pos);
++ 
++ 			} else {
++-				CELLWIDGET(twXRanges, row, TwRangesColumn::Min, QDateTimeEdit, setDateTime(QDateTime::fromMSecsSinceEpoch(xRange.start())));
++-				CELLWIDGET(twXRanges, row, TwRangesColumn::Max, QDateTimeEdit, setDateTime(QDateTime::fromMSecsSinceEpoch(xRange.end())));
+++				CELLWIDGET(twXRanges, row, TwRangesColumn::Min, QDateTimeEdit, setDateTime(QDateTime::fromMSecsSinceEpoch(xRange.start(), Qt::UTC)));
+++				CELLWIDGET(twXRanges, row, TwRangesColumn::Max, QDateTimeEdit, setDateTime(QDateTime::fromMSecsSinceEpoch(xRange.end(), Qt::UTC)));
++ 				auto* dte = qobject_cast<QDateTimeEdit*>(ui.twXRanges->cellWidget(row, TwRangesColumn::Min));
++ 				if (dte)
++ 					isDateTime = true;
 diff -ruNa a/src/kdefrontend/dockwidgets/XYFitCurveDock.cpp b/src/kdefrontend/dockwidgets/XYFitCurveDock.cpp
 --- a/src/kdefrontend/dockwidgets/XYFitCurveDock.cpp	2022-05-02 07:35:16.000000000 +0200
 +++ b/src/kdefrontend/dockwidgets/XYFitCurveDock.cpp	2022-06-25 10:11:12.080051594 +0200
