@@ -291,6 +291,18 @@ diff -ruNa a/src/backend/worksheet/plots/cartesian/XYFitCurve.h b/src/backend/wo
  
  	QIcon icon() const override;
  	void save(QXmlStreamWriter*) const override;
+diff -ruNa a/src/kdefrontend/dockwidgets/CartesianPlotDock.cpp b/src/kdefrontend/dockwidgets/CartesianPlotDock.cpp
+--- a/src/kdefrontend/dockwidgets/CartesianPlotDock.cpp	2022-05-02 07:35:16.000000000 +0200
++++ b/src/kdefrontend/dockwidgets/CartesianPlotDock.cpp	2022-07-10 21:08:19.602301532 +0200
+@@ -517,7 +517,7 @@
+ 
+ 			} else {
+ 				CELLWIDGET(twXRanges, row, TwRangesColumn::Min, QDateTimeEdit, setDateTime( QDateTime::fromMSecsSinceEpoch(xRange.start())));
+-				CELLWIDGET(twXRanges, row, TwRangesColumn::Max, QDateTimeEdit, setDateTime( QDateTime::fromMSecsSinceEpoch(xRange.start())));
++				CELLWIDGET(twXRanges, row, TwRangesColumn::Max, QDateTimeEdit, setDateTime( QDateTime::fromMSecsSinceEpoch(xRange.end())));
+ 				auto* dte = qobject_cast<QDateTimeEdit*>(ui.twXRanges->cellWidget(row, TwRangesColumn::Min));
+ 				if (dte)
+ 					isDateTime = true;
 diff -ruNa a/src/kdefrontend/dockwidgets/XYFitCurveDock.cpp b/src/kdefrontend/dockwidgets/XYFitCurveDock.cpp
 --- a/src/kdefrontend/dockwidgets/XYFitCurveDock.cpp	2022-05-02 07:35:16.000000000 +0200
 +++ b/src/kdefrontend/dockwidgets/XYFitCurveDock.cpp	2022-06-25 10:11:12.080051594 +0200
