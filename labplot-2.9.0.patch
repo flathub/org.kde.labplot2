@@ -476,6 +476,23 @@ diff -ruNa a/src/backend/worksheet/plots/cartesian/XYFitCurve.h b/src/backend/wo
  
  	QIcon icon() const override;
  	void save(QXmlStreamWriter*) const override;
+diff -ruNa a/src/CMakeLists.txt b/src/CMakeLists.txt
+--- a/src/CMakeLists.txt	2022-05-02 07:35:16.000000000 +0200
++++ b/src/CMakeLists.txt	2022-09-01 17:29:13.628463099 +0200
+@@ -526,9 +526,11 @@
+ 		add_dependencies( labplot2lib 3rdparty_readstat )
+ 	ENDIF ()
+ 	# link system readstat with iconv
+-	IF (READSTAT_FOUND AND (WIN32 OR APPLE))
++	IF (READSTAT_FOUND)
+ 		FIND_LIBRARY ( ICONV_LIBRARIES NAMES iconv libiconv libconv-2 )
+-		target_link_libraries ( labplot2lib ${ICONV_LIBRARIES} )
++		IF (ICONV_LIBRARIES)
++			target_link_libraries ( labplot2lib ${ICONV_LIBRARIES} )
++		ENDIF ()
+ 	ENDIF ()
+ 	target_link_libraries( labplot2lib ${READSTAT_LIBRARIES} ${ZLIB_LIBRARIES} )
+ ENDIF ()
 diff -ruNa a/src/kdefrontend/dockwidgets/CartesianPlotDock.cpp b/src/kdefrontend/dockwidgets/CartesianPlotDock.cpp
 --- a/src/kdefrontend/dockwidgets/CartesianPlotDock.cpp	2022-05-02 07:35:16.000000000 +0200
 +++ b/src/kdefrontend/dockwidgets/CartesianPlotDock.cpp	2022-07-11 00:21:09.160454579 +0200
