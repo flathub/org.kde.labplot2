@@ -175,8 +175,8 @@
             "sources": [
                 {
                     "type": "archive",
-                    "url": "https://github.com/KDE/cantor/archive/v22.11.80.tar.gz",
-                    "sha256": "85c43e842f329d9bd5ded33063e1bf24ee76512b79438d0db727add0d427d8fd",
+                    "url": "https://github.com/KDE/cantor/archive/v22.11.90.tar.gz",
+                    "sha256": "be417673969012ede2796c286276cf54af4f977ee2710e1fe7c1150f8df3a96e",
                     "x-checker-data": {
                         "type": "anitya",
                         "project-id": 236341,
