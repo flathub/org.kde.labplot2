@@ -175,8 +175,8 @@
             "sources": [
                 {
                     "type": "archive",
-                    "url": "https://github.com/KDE/cantor/archive/v22.12.2.tar.gz",
-                    "sha256": "1eb2f53f93fa229aa6cdaefbcdd5a3096237ea68cc0adad922561a263e3bc09f",
+                    "url": "https://github.com/KDE/cantor/archive/v22.12.3.tar.gz",
+                    "sha256": "ca53a936111cf7ae4f9e93d2ee5050ba6bc4710b2e3e56bf5e54635def1e0fba",
                     "x-checker-data": {
                         "type": "anitya",
                         "project-id": 236341,
@@ -192,8 +192,8 @@
                     "sources": [
                         {
                             "type": "archive",
-                            "url": "https://github.com/KDE/analitza/archive/v22.12.2.tar.gz",
-                            "sha256": "62305082966157dcf0b8472ae8e37781b3fe3bc0ee0289b60e128a218b2d17d2",
+                            "url": "https://github.com/KDE/analitza/archive/v22.12.3.tar.gz",
+                            "sha256": "7eacd84a263c0b14aadb350480537413805d56c8665408807f4a7c9496430742",
                             "x-checker-data": {
                                 "type": "anitya",
                                 "project-id": 8763,
