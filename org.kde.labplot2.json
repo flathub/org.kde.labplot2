@@ -77,8 +77,8 @@
             "sources": [
                 {
                     "type": "archive",
-                    "url": "http://heasarc.gsfc.nasa.gov/FTP/software/fitsio/c/cfitsio-4.1.0.tar.gz",
-                    "sha256": "b367c695d2831958e7166921c3b356d5dfa51b1ecee505b97416ba39d1b6c17a"
+                    "url": "http://heasarc.gsfc.nasa.gov/FTP/software/fitsio/c/cfitsio-4.2.0.tar.gz",
+                    "sha256": "eba53d1b3f6e345632bb09a7b752ec7ced3d63ec5153a848380f3880c5d61889"
                 }
             ]
         },
@@ -138,8 +138,8 @@
             "sources": [
                 {
                     "type": "archive",
-                    "url": "https://github.com/WizardMac/ReadStat/archive/v1.1.8.tar.gz",
-                    "sha256": "814d4f4900d8b7a31989e4adcbaed79a480bdf09b3c72225cf9b9e5bec36b831"
+                    "url": "https://github.com/WizardMac/ReadStat/archive/v1.1.9.tar.gz",
+                    "sha256": "89af7c785a7ae3d9a7af6e64a69028829a429f66a14b1b913be22816dc07ddca"
                 }
             ]
         },
@@ -299,28 +299,60 @@
                 }
             ]
         },
+	{
+            "name": "fast_float",
+            "buildsystem": "cmake-ninja",
+            "sources": [
+                {
+                    "type": "git",
+                    "url": "https://github.com/fastfloat/fast_float.git",
+                    "tag": "1ea4f27b2aeee2859a1354a3c24cff52a116cad1"
+                }
+            ]
+        },
+        {
+            "name": "dbc_parser_cpp",
+            "buildsystem": "cmake-ninja",
+            "config-opts": [ "-DENABLE_TESTS=OFF", "-DBUILD_DOCUMENTATION=OFF"],
+            "sources": [
+                {
+                    "type": "git",
+                    "url": "https://github.com/Murmele/dbc_parser_cpp.git",
+                    "tag": "ca69d0dd08a03fc0210820a4f81bfd217ad25722"
+                }
+            ]
+        },
+        {
+            "name": "vector_blf",
+            "buildsystem": "cmake-ninja",
+            "sources": [
+                {
+                    "type": "git",
+                    "url": "https://github.com/Murmele/vector_blf.git",
+                    "tag": "b7a419c4d8edbf495ab309b57a380a2444ee2730"
+                }
+            ]
+        },
         {
             "name": "labplot",
             "buildsystem": "cmake",
             "config-opts": [
                 "-DCMAKE_BUILD_TYPE=Release",
-                "-DQt5Mqtt_DIR=/app/qtmqtt/usr/lib/x86_64-linux-gnu/cmake/Qt5Mqtt"
+                "-DQt5Mqtt_DIR=/app/qtmqtt/usr/lib/x86_64-linux-gnu/cmake/Qt5Mqtt",
+                "-DLOCAL_DBC_PARSER=OFF",
+                "-DLOCAL_VECTOR_BLF=OFF"
             ],
             "sources": [
                 {
                     "type": "archive",
-                    "url": "https://download.kde.org/stable/labplot/2.9.0/labplot-2.9.0.tar.xz",
-                    "sha256": "e5a31489f0b72a70cc632e1078506d7e7bc1ec7dbc89c5428d197a14e44b21f2",
+                    "url": "https://download.kde.org/stable/labplot/labplot-2.10.0.tar.xz",
+                    "sha256": "5dfc674310904a43875d69e3e260a1fedd968e6c1b1ecdaba755ab1aa38cba90",
                     "x-checker-data": {
                         "type": "anitya",
                         "project-id": 1532,
                         "stable-only": true,
-                        "url-template": "https://download.kde.org/stable/labplot/$version/labplot-$version.tar.xz"
+                        "url-template": "https://download.kde.org/stable/labplot/labplot-$version.tar.xz"
                     }
-                },
-                {
-                    "type": "patch",
-                    "path": "labplot-2.9.0.patch"
                 }
             ]
         }
