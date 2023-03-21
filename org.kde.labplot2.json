@@ -315,7 +315,7 @@
                         "type": "anitya",
                         "project-id": 1532,
                         "stable-only": true,
-                        "url-template": "https://download.kde.org/stable/labplot/$version/labplot-$version.tar.xz"
+                        "url-template": "https://download.kde.org/stable/labplot/labplot-$version.tar.xz"
                     }
                 }
             ]
