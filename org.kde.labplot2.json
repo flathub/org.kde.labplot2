@@ -299,7 +299,7 @@
                 }
             ]
         },
-	{
+        {
             "name": "fast_float",
             "buildsystem": "cmake-ninja",
             "sources": [
@@ -313,7 +313,10 @@
         {
             "name": "dbc_parser_cpp",
             "buildsystem": "cmake-ninja",
-            "config-opts": [ "-DENABLE_TESTS=OFF", "-DBUILD_DOCUMENTATION=OFF"],
+            "config-opts": [
+                "-DENABLE_TESTS=OFF",
+                "-DBUILD_DOCUMENTATION=OFF"
+            ],
             "sources": [
                 {
                     "type": "git",
