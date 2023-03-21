@@ -309,18 +309,14 @@
             "sources": [
                 {
                     "type": "archive",
-                    "url": "https://download.kde.org/stable/labplot/2.9.0/labplot-2.9.0.tar.xz",
-                    "sha256": "e5a31489f0b72a70cc632e1078506d7e7bc1ec7dbc89c5428d197a14e44b21f2",
+                    "url": "https://download.kde.org/stable/labplot/labplot-2.10.0.tar.xz",
+                    "sha256": "5dfc674310904a43875d69e3e260a1fedd968e6c1b1ecdaba755ab1aa38cba90",
                     "x-checker-data": {
                         "type": "anitya",
                         "project-id": 1532,
                         "stable-only": true,
                         "url-template": "https://download.kde.org/stable/labplot/$version/labplot-$version.tar.xz"
                     }
-                },
-                {
-                    "type": "patch",
-                    "path": "labplot-2.9.0.patch"
                 }
             ]
         }
