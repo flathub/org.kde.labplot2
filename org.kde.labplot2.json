@@ -175,8 +175,8 @@
             "sources": [
                 {
                     "type": "archive",
-                    "url": "https://github.com/KDE/cantor/archive/v22.12.3.tar.gz",
-                    "sha256": "ca53a936111cf7ae4f9e93d2ee5050ba6bc4710b2e3e56bf5e54635def1e0fba",
+                    "url": "https://github.com/KDE/cantor/archive/v23.03.80.tar.gz",
+                    "sha256": "7109011d0fc78f76efa093c0952b683a62f6530ec75dbe15eecbecb96bb166c4",
                     "x-checker-data": {
                         "type": "anitya",
                         "project-id": 236341,
@@ -299,7 +299,7 @@
                 }
             ]
         },
-	{
+        {
             "name": "fast_float",
             "buildsystem": "cmake-ninja",
             "sources": [
@@ -313,7 +313,10 @@
         {
             "name": "dbc_parser_cpp",
             "buildsystem": "cmake-ninja",
-            "config-opts": [ "-DENABLE_TESTS=OFF", "-DBUILD_DOCUMENTATION=OFF"],
+            "config-opts": [
+                "-DENABLE_TESTS=OFF",
+                "-DBUILD_DOCUMENTATION=OFF"
+            ],
             "sources": [
                 {
                     "type": "git",
