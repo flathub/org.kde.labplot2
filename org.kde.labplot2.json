@@ -175,13 +175,13 @@
             "sources": [
                 {
                     "type": "archive",
-                    "url": "https://github.com/KDE/cantor/archive/v23.03.80.tar.gz",
-                    "sha256": "7109011d0fc78f76efa093c0952b683a62f6530ec75dbe15eecbecb96bb166c4",
+                    "url": "https://invent.kde.org/education/cantor/-/archive/v23.03.90/cantor-v23.03.90.tar.gz",
+                    "sha256": "7d996d3e3fa2aaca5e7adb69164f9682b5f7fbbe9b60dafc025c196703b3c810",
                     "x-checker-data": {
                         "type": "anitya",
                         "project-id": 236341,
                         "stable-only": true,
-                        "url-template": "https://github.com/KDE/cantor/archive/v$version.tar.gz"
+                        "url-template": "https://invent.kde.org/education/cantor/-/archive/v$version/cantor-v$version.tar.gz"
                     }
                 }
             ],
