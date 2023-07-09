@@ -354,8 +354,8 @@
             "sources": [
                 {
                     "type": "archive",
-                    "url": "https://download.kde.org/stable/labplot/labplot-2.10.0.tar.xz",
-                    "sha256": "5dfc674310904a43875d69e3e260a1fedd968e6c1b1ecdaba755ab1aa38cba90",
+                    "url": "https://download.kde.org/stable/labplot/labplot-2.10.1.tar.xz",
+                    "sha256": "2b6e181517cfb6e0dfff7b895f3eb20c7ce359e6732d38545e0757c9aea2daef",
                     "x-checker-data": {
                         "type": "anitya",
                         "project-id": 1532,
