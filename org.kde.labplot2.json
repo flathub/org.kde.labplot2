@@ -181,8 +181,8 @@
             "sources": [
                 {
                     "type": "archive",
-                    "url": "https://invent.kde.org/education/cantor/-/archive/v23.07.80/cantor-v23.07.80.tar.gz",
-                    "sha256": "f045b8ed59656aabb9740223785301a99a7ebc4478e1dc69f07f8b6037620bf5",
+                    "url": "https://invent.kde.org/education/cantor/-/archive/v23.07.90/cantor-v23.07.90.tar.gz",
+                    "sha256": "c66e1c3b176859aad2a5550be1f0a46f35beac4689c9685cc7ebad4bb62dd380",
                     "x-checker-data": {
                         "type": "anitya",
                         "project-id": 236341,
@@ -290,8 +290,8 @@
                             "sources": [
                                 {
                                     "type": "archive",
-                                    "url": "https://boostorg.jfrog.io/artifactory/main/release/1.82.0/source/boost_1_82_0.tar.bz2",
-                                    "sha256": "a6e1ab9b0860e6a2881dd7b21fe9f737a095e5f33a3a874afc6a345228597ee6",
+                                    "url": "https://boostorg.jfrog.io/artifactory/main/release/1.83.0/source/boost_1_83_0.tar.bz2",
+                                    "sha256": "6478edfe2f3305127cffe8caf73ea0176c53769f4bf1585be237eb30798c3b8e",
                                     "x-checker-data": {
                                         "type": "anitya",
                                         "project-id": 6845,
