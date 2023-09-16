@@ -181,8 +181,8 @@
             "sources": [
                 {
                     "type": "archive",
-                    "url": "https://invent.kde.org/education/cantor/-/archive/v23.08.0/cantor-v23.08.0.tar.gz",
-                    "sha256": "61a20e30700db16b6b7606d9ffa25f7fc966dd43fca49302a988156a990909e8",
+                    "url": "https://invent.kde.org/education/cantor/-/archive/v23.08.1/cantor-v23.08.1.tar.gz",
+                    "sha256": "0045eeb3ca8896741da72be3b8768875b450de0b99f86ae84e6c4fce16185f53",
                     "x-checker-data": {
                         "type": "anitya",
                         "project-id": 236341,
@@ -198,8 +198,8 @@
                     "sources": [
                         {
                             "type": "archive",
-                            "url": "https://github.com/KDE/analitza/archive/v23.08.0.tar.gz",
-                            "sha256": "4dea560a2e7e7a675bd0cc203965611fc123d8fb1b61c32464d0b4fb11120c1a",
+                            "url": "https://github.com/KDE/analitza/archive/v23.08.1.tar.gz",
+                            "sha256": "666197b8eacd82942d5fce93aa9a59d104fc45fb05dc04869029f8d4a3e1d784",
                             "x-checker-data": {
                                 "type": "anitya",
                                 "project-id": 8763,
