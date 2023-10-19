@@ -181,8 +181,8 @@
             "sources": [
                 {
                     "type": "archive",
-                    "url": "https://invent.kde.org/education/cantor/-/archive/v23.08.1/cantor-v23.08.1.tar.gz",
-                    "sha256": "0045eeb3ca8896741da72be3b8768875b450de0b99f86ae84e6c4fce16185f53",
+                    "url": "https://invent.kde.org/education/cantor/-/archive/v23.08.2/cantor-v23.08.2.tar.gz",
+                    "sha256": "8d9bc636515f146fbf80f2fc74484fae8547450d207de597937640fe279e1472",
                     "x-checker-data": {
                         "type": "anitya",
                         "project-id": 236341,
@@ -198,8 +198,8 @@
                     "sources": [
                         {
                             "type": "archive",
-                            "url": "https://github.com/KDE/analitza/archive/v23.08.1.tar.gz",
-                            "sha256": "666197b8eacd82942d5fce93aa9a59d104fc45fb05dc04869029f8d4a3e1d784",
+                            "url": "https://github.com/KDE/analitza/archive/v23.08.2.tar.gz",
+                            "sha256": "604e9e5f2d038fc4ddb374dd04881424635ffc73af2ca79ac1fa47541595465c",
                             "x-checker-data": {
                                 "type": "anitya",
                                 "project-id": 8763,
@@ -240,15 +240,16 @@
                         "-DENABLE_CPP=OFF",
                         "-DENABLE_GLIB=OFF",
                         "-DENABLE_GOBJECT_INTROSPECTION=OFF",
-                        "-DENABLE_UTILS=OFF"
+                        "-DENABLE_UTILS=OFF",
+                        "-DENABLE_QT6=OFF"
                     ],
                     "buildsystem": "cmake-ninja",
                     "builddir": true,
                     "sources": [
                         {
                             "type": "archive",
-                            "url": "https://poppler.freedesktop.org/poppler-23.09.0.tar.xz",
-                            "sha256": "80d1d44dd8bdf4ac1a47d56c5065075eb9991790974b1ed7d14b972acde88e55",
+                            "url": "https://poppler.freedesktop.org/poppler-23.10.0.tar.xz",
+                            "sha256": "31a3dfdea79f4922402d313737415a44d44dc14d6b317f959a77c5bba0647dd9",
                             "x-checker-data": {
                                 "type": "anitya",
                                 "project-id": 3686,
