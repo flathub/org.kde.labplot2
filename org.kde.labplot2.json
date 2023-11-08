@@ -181,8 +181,8 @@
             "sources": [
                 {
                     "type": "archive",
-                    "url": "https://invent.kde.org/education/cantor/-/archive/v23.08.2/cantor-v23.08.2.tar.gz",
-                    "sha256": "8d9bc636515f146fbf80f2fc74484fae8547450d207de597937640fe279e1472",
+                    "url": "https://invent.kde.org/education/cantor/-/archive/v24.01.75/cantor-v24.01.75.tar.gz",
+                    "sha256": "fccfa2a508ce2dbb4adafacb8069843478427f84307dd7a9c03ac026db93427e",
                     "x-checker-data": {
                         "type": "anitya",
                         "project-id": 236341,
