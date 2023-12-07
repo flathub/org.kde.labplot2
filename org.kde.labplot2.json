@@ -181,8 +181,8 @@
             "sources": [
                 {
                     "type": "archive",
-                    "url": "https://invent.kde.org/education/cantor/-/archive/v23.08.3/cantor-v23.08.3.tar.gz",
-                    "sha256": "eae32ab30e76bd8e0f880b793b136de9109dc30c3932029bdd9acee47172c869",
+                    "url": "https://invent.kde.org/education/cantor/-/archive/v23.08.4/cantor-v23.08.4.tar.gz",
+                    "sha256": "2eb3f57de8d990e659a053b1a0c299f775a5afd6e544f8984ac9f502c053fdd3",
                     "x-checker-data": {
                         "type": "anitya",
                         "project-id": 236341,
@@ -198,8 +198,8 @@
                     "sources": [
                         {
                             "type": "archive",
-                            "url": "https://github.com/KDE/analitza/archive/v23.08.3.tar.gz",
-                            "sha256": "442cbb0a7d9852dee162669f6833789659c14970c15dca443dd3f5ee1a10638e",
+                            "url": "https://github.com/KDE/analitza/archive/v23.08.4.tar.gz",
+                            "sha256": "aceb87f29bebee195bd450a7b1aaf1f8166ef544ac600babe48968dbbec32e2d",
                             "x-checker-data": {
                                 "type": "anitya",
                                 "project-id": 8763,
@@ -248,8 +248,8 @@
                     "sources": [
                         {
                             "type": "archive",
-                            "url": "https://poppler.freedesktop.org/poppler-23.11.0.tar.xz",
-                            "sha256": "f99cca6799cb9cb6c92fc1e0eb78547b611cb733750ab7cb047cb0e6c246539c",
+                            "url": "https://poppler.freedesktop.org/poppler-23.12.0.tar.xz",
+                            "sha256": "beba398c9d37a9b6d02486496635e08f1df3d437cfe61dab2593f47c4d14cdbb",
                             "x-checker-data": {
                                 "type": "anitya",
                                 "project-id": 3686,
