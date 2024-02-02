@@ -10,8 +10,8 @@
     "finish-args": [
         "--share=network",
         "--share=ipc",
-        "--socket=x11",
         "--socket=wayland",
+        "--socket=x11",
         "--filesystem=host",
         "--filesystem=/tmp"
     ],
@@ -363,7 +363,11 @@
                         "stable-only": true,
                         "url-template": "https://download.kde.org/stable/labplot/labplot-$version.tar.xz"
                     }
-                }
+                },
+		{
+                    "type": "patch",
+		    "path": "labplot-2.10.1.patch"
+		}
             ]
         }
     ]
