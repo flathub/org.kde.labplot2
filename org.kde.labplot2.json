@@ -364,10 +364,10 @@
                         "url-template": "https://download.kde.org/stable/labplot/labplot-$version.tar.xz"
                     }
                 },
-		{
+                {
                     "type": "patch",
-		    "path": "labplot-2.10.1.patch"
-		}
+                    "path": "labplot-2.10.1.patch"
+                }
             ]
         }
     ]
