@@ -343,13 +343,13 @@
                 {
                     "type": "git",
                     "url": "https://github.com/Murmele/vector_blf.git",
-                    "tag": "b7a419c4d8edbf495ab309b57a380a2444ee2730"
+                    "tag": "2c1a8e649328f2e06ce4d45c6223628bc39fd178"
                 }
             ]
         },
         {
             "name": "labplot",
-            "buildsystem": "cmake",
+            "buildsystem": "cmake-ninja",
             "config-opts": [
                 "-DCMAKE_BUILD_TYPE=Release",
                 "-DQt5Mqtt_DIR=/app/qtmqtt/usr/lib/x86_64-linux-gnu/cmake/Qt5Mqtt",
