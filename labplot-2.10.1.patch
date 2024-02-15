@@ -1,11 +1,12 @@
 diff -ruNa a/org.kde.labplot2.appdata.xml b/org.kde.labplot2.appdata.xml
 --- a/org.kde.labplot2.appdata.xml	2023-07-09 22:58:34.000000000 +0200
-+++ b/org.kde.labplot2.appdata.xml	2024-02-02 08:29:52.630840142 +0100
-@@ -3,6 +3,7 @@
++++ b/org.kde.labplot2.appdata.xml	2024-02-15 16:02:51.867056753 +0100
+@@ -3,6 +3,8 @@
    <id>org.kde.labplot2.desktop</id>
    <metadata_license>CC0-1.0</metadata_license>
    <project_license>GPL-2.0+</project_license>
 +  <developer_name>The KDE community</developer_name>
++  <launchable type="desktop-id">org.kde.labplot2.desktop</launchable>
    <name>LabPlot</name>
    <name xml:lang="bs">LabPlot</name>
    <name xml:lang="ca">LabPlot</name>
