@@ -185,8 +185,8 @@
             "sources": [
                 {
                     "type": "archive",
-                    "url": "https://invent.kde.org/education/cantor/-/archive/v23.08.5/cantor-v23.08.5.tar.gz",
-                    "sha256": "ab7241bc4078b45620692eda07812362b2077a12f0e113b7788be3bf119327f5",
+                    "url": "https://invent.kde.org/education/cantor/-/archive/v24.02.0/cantor-v24.02.0.tar.gz",
+                    "sha256": "966a81e1b6e0b3cd2a97280dae08ef4044700706dcc559d899677395dd1e3054",
                     "x-checker-data": {
                         "type": "anitya",
                         "project-id": 236341,
@@ -202,8 +202,8 @@
                     "sources": [
                         {
                             "type": "archive",
-                            "url": "https://github.com/KDE/analitza/archive/v23.08.5.tar.gz",
-                            "sha256": "4b0336166e03ddad50f169233ba63d3c2d555a1a6a8f5b33e3867bdf33224d4a",
+                            "url": "https://github.com/KDE/analitza/archive/v24.02.0.tar.gz",
+                            "sha256": "6cbc6f695c3089221aa2552243229b269c46392ec8d16939f72ca31306b73bff",
                             "x-checker-data": {
                                 "type": "anitya",
                                 "project-id": 8763,
@@ -270,8 +270,8 @@
                             "sources": [
                                 {
                                     "type": "archive",
-                                    "url": "https://github.com/uclouvain/openjpeg/archive/v2.5.1.tar.gz",
-                                    "sha256": "c0b92dadd65e33b1cf94f39dd9157d5469846744c2e0afb8ca10961f51f61da6",
+                                    "url": "https://github.com/uclouvain/openjpeg/archive/v2.5.2.tar.gz",
+                                    "sha256": "90e3896fed910c376aaf79cdd98bdfdaf98c6472efd8e1debf0a854938cbda6a",
                                     "x-checker-data": {
                                         "type": "anitya",
                                         "project-id": 2550,
