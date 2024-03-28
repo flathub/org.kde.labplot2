@@ -209,8 +209,14 @@
                     "sources": [
                         {
                             "type": "archive",
-                            "url": "https://github.com/KDE/analitza/archive/v23.08.5.tar.gz",
-                            "sha256": "4b0336166e03ddad50f169233ba63d3c2d555a1a6a8f5b33e3867bdf33224d4a"
+                            "url": "https://download.kde.org/stable/release-service/24.05.1/src/analitza-24.05.1.tar.xz",
+                            "sha256": "4e207a5e2e086a6a76a2d1744b36cb069379154275b3b7c5b97317f1b5ef8079",
+                            "x-checker-data": {
+                                "type": "anitya",
+                                "project-id": 8763,
+                                "stable-only": true,
+                                "url-template": "https://download.kde.org/stable/release-service/$version/src/analitza-$version.tar.xz"
+                            }
                         }
                     ],
                     "modules": [
