@@ -202,8 +202,8 @@
                     "sources": [
                         {
                             "type": "archive",
-                            "url": "https://github.com/KDE/analitza/archive/v23.08.5.tar.gz",
-                            "sha256": "4b0336166e03ddad50f169233ba63d3c2d555a1a6a8f5b33e3867bdf33224d4a",
+                            "url": "https://github.com/KDE/analitza/archive/v24.02.1.tar.gz",
+                            "sha256": "2982b04ee254dc358a4c76e0e74b164ce15962c6471eed5aba282b85717bc0ad",
                             "x-checker-data": {
                                 "type": "anitya",
                                 "project-id": 8763,
