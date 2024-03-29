@@ -8,12 +8,12 @@
     "command": "labplot2",
     "rename-icon": "labplot2",
     "finish-args": [
-        "--share=network",
-        "--share=ipc",
-        "--socket=wayland",
-        "--socket=fallback-x11",
+        "--filesystem=/tmp",
         "--filesystem=host",
-        "--filesystem=/tmp"
+        "--share=ipc",
+        "--share=network",
+        "--socket=fallback-x11",
+        "--socket=wayland"
     ],
     "cleanup": [
         "/include",
