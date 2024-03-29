@@ -84,11 +84,8 @@
         },
         {
             "name": "qtmqtt",
-            "buildsystem": "qmake",
+            "buildsystem": "cmake-ninja",
             "builddir": true,
-            "make-install-args": [
-                "INSTALL_ROOT=/app/qtmqtt"
-            ],
             "sources": [
                 {
                     "type": "git",
