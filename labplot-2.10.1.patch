@@ -1,6 +1,6 @@
 diff -ruNa a/org.kde.labplot2.appdata.xml b/org.kde.labplot2.appdata.xml
 --- a/org.kde.labplot2.appdata.xml	2023-07-09 22:58:34.000000000 +0200
-+++ b/org.kde.labplot2.appdata.xml	2024-02-15 16:02:51.867056753 +0100
++++ b/org.kde.labplot2.appdata.xml	2024-04-30 11:50:20.712331624 +0200
 @@ -3,6 +3,8 @@
    <id>org.kde.labplot2.desktop</id>
    <metadata_license>CC0-1.0</metadata_license>
@@ -10,3 +10,24 @@ diff -ruNa a/org.kde.labplot2.appdata.xml b/org.kde.labplot2.appdata.xml
    <name>LabPlot</name>
    <name xml:lang="bs">LabPlot</name>
    <name xml:lang="ca">LabPlot</name>
+diff -ruNa a/src/backend/datasources/filters/MatioFilter.cpp b/src/backend/datasources/filters/MatioFilter.cpp
+--- a/src/backend/datasources/filters/MatioFilter.cpp	2023-07-09 22:58:35.000000000 +0200
++++ b/src/backend/datasources/filters/MatioFilter.cpp	2024-04-30 11:45:16.036589975 +0200
+@@ -342,7 +342,7 @@
+ 	info += QLatin1String("<br>");
+ 
+ 	size_t n;
+-	char** dir = Mat_GetDir(matfp, &n);
++	auto* dir = Mat_GetDir(matfp, &n);
+ 	info += i18n("Number of variables: ") + QString::number(n);
+ 	info += QStringLiteral("<br>");
+ 	if (dir && n < 10) { // only show variable info when there are not too many
+@@ -550,7 +550,7 @@
+ 	}
+ 
+ 	// get names of all vars
+-	char** dir = Mat_GetDir(matfp, &varCount);
++	auto* dir = Mat_GetDir(matfp, &varCount);
+ 	DEBUG(Q_FUNC_INFO << ", found " << varCount << " vars")
+ 
+ 	varsInfo.clear();
