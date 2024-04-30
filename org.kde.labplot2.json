@@ -203,13 +203,7 @@
                         {
                             "type": "archive",
                             "url": "https://github.com/KDE/analitza/archive/v23.08.5.tar.gz",
-                            "sha256": "4b0336166e03ddad50f169233ba63d3c2d555a1a6a8f5b33e3867bdf33224d4a",
-                            "x-checker-data": {
-                                "type": "anitya",
-                                "project-id": 8763,
-                                "stable-only": true,
-                                "url-template": "https://github.com/KDE/analitza/archive/v$version.tar.gz"
-                            }
+                            "sha256": "4b0336166e03ddad50f169233ba63d3c2d555a1a6a8f5b33e3867bdf33224d4a"
                         }
                     ],
                     "modules": [
