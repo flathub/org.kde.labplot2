@@ -192,13 +192,13 @@
             "sources": [
                 {
                     "type": "archive",
-                    "url": "https://invent.kde.org/education/cantor/-/archive/v24.05.0/cantor-v24.05.0.tar.gz",
-                    "sha256": "97d39b94b87fb884e936bb1e04fbf1437a505b86e1dbb7385607100e347b17a3",
+                    "url": "https://download.kde.org/stable/release-service/24.05.1/src/cantor-24.05.1.tar.xz",
+                    "sha256": "8da087918a5205876266eec0cdc45a900d632c6fec3491257842cd82409f1f1e",
                     "x-checker-data": {
                         "type": "anitya",
                         "project-id": 236341,
                         "stable-only": true,
-                        "url-template": "https://invent.kde.org/education/cantor/-/archive/v$version/cantor-v$version.tar.gz"
+                        "url-template": "https://download.kde.org/stable/release-service/$version/src/cantor-$version.tar.xz"
                     }
                 }
             ],
