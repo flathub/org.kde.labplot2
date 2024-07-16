@@ -326,8 +326,7 @@
             "name": "dbc_parser_cpp",
             "buildsystem": "cmake-ninja",
             "config-opts": [
-                "-DENABLE_TESTS=OFF",
-                "-DBUILD_DOCUMENTATION=OFF"
+                "-DBC_ENABLE_TESTS=OFF"
             ],
             "sources": [
                 {
