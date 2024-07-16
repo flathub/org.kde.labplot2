@@ -174,7 +174,8 @@
             "name": "discount",
             "buildsystem": "simple",
             "build-commands": [
-                "./configure.sh --prefix=/app --confdir=/etc --pkg-config",
+                "./configure.sh --prefix=/app --confdir=/etc --pkg-config --enable-all-features --with-fenced-code --shared",
+		"sed -e 's|/sbin/ldconfig|/sbin/ldconfig -n|' -i librarian.sh",
                 "make",
                 "make install"
             ],
