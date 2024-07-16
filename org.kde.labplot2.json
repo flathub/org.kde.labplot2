@@ -340,6 +340,7 @@
                             "buildsystem": "simple",
                             "build-commands": [
                                 "./bootstrap.sh --prefix=/app --with-libraries=system,iostreams,program_options,filesystem,date_time",
+				"./b2 headers",
                                 "./b2 -j $FLATPAK_BUILDER_N_JOBS install"
                             ],
                             "sources": [
