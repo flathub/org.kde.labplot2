@@ -188,6 +188,54 @@
             ]
         },
         {
+            "name": "mdds",
+            "sources": [
+                {
+                    "type": "archive",
+                    "url": "https://gitlab.com/api/v4/projects/mdds%2Fmdds/packages/generic/source/2.1.1/mdds-2.1.1.tar.xz",
+                    "sha256": "1483d90cefb8aa4563c4d0a85cb7b243aa95217d235d422e9ca6722fd5b97e56",
+                    "x-checker-data": {
+                        "type": "anitya",
+                        "project-id": 1962,
+                        "stable-only": true,
+                        "url-template": "https://gitlab.com/api/v4/projects/mdds%2Fmdds/packages/generic/source/$version/mdds-$version.tar.xz"
+                    }
+                }
+            ]
+        },
+        {
+            "name": "libixion",
+            "sources": [
+                {
+                    "type": "archive",
+                    "url": "https://gitlab.com/api/v4/projects/ixion%2Fixion/packages/generic/source/0.19.0/libixion-0.19.0.tar.xz",
+                    "sha256": "b4864d7a55351a09adbe9be44e5c65b1d417e80e946c947951d0e8428b9dcd15",
+                    "x-checker-data": {
+                        "type": "anitya",
+                        "project-id": 6208,
+                        "stable-only": true,
+                        "url-template": "https://gitlab.com/api/v4/projects/ixion%2Fixion/packages/generic/source/$version/libixion-$version.tar.xz"
+                    }
+                }
+            ]
+        },
+        {
+            "name": "liborcus",
+            "sources": [
+                {
+                    "type": "archive",
+                    "url": "https://gitlab.com/api/v4/projects/orcus%2Forcus/packages/generic/source/0.19.2/liborcus-0.19.2.tar.xz",
+                    "sha256": "69ed26a00d4aaa7688e62a6e003cbc81928521a45e96605e53365aa499719e39",
+                    "x-checker-data": {
+                        "type": "anitya",
+                        "project-id": 1696,
+                        "stable-only": true,
+                        "url-template": "https://gitlab.com/api/v4/projects/orcus%2Forcus/packages/generic/source/$version/liborcus-$version.tar.xz"
+                    }
+                }
+            ]
+        },
+        {
             "name": "cantor",
             "buildsystem": "cmake-ninja",
             "sources": [
