@@ -61,8 +61,8 @@
             "sources": [
                 {
                     "type": "archive",
-                    "url": "https://github.com/Unidata/netcdf-c/archive/v4.9.2.tar.gz",
-                    "sha256": "bc104d101278c68b303359b3dc4192f81592ae8640f1aee486921138f7f88cb7",
+                    "url": "https://github.com/Unidata/netcdf-c/archive/v4.9.3.tar.gz",
+                    "sha256": "990f46d49525d6ab5dc4249f8684c6deeaf54de6fec63a187e9fb382cc0ffdff",
                     "x-checker-data": {
                         "type": "anitya",
                         "project-id": 10354,
@@ -77,8 +77,8 @@
             "sources": [
                 {
                     "type": "archive",
-                    "url": "https://heasarc.gsfc.nasa.gov/FTP/software/fitsio/c/cfitsio-4.4.1.tar.gz",
-                    "sha256": "66a1dc3f21800f9eeabd9eac577b91fcdd9aabba678fbba3b8527319110d1d25",
+                    "url": "https://heasarc.gsfc.nasa.gov/FTP/software/fitsio/c/cfitsio-4.5.0.tar.gz",
+                    "sha256": "e4854fc3365c1462e493aa586bfaa2f3d0bb8c20b75a524955db64c27427ce09",
                     "disable-http-decompression": true,
                     "x-checker-data": {
                         "type": "anitya",
@@ -129,8 +129,8 @@
             "sources": [
                 {
                     "type": "archive",
-                    "url": "https://download.kde.org/stable/frameworks/6.1/kuserfeedback-6.1.0.tar.xz",
-                    "sha256": "cdfa46fd02773f25820d5a8017d6ca9746d1054cf44e3ae33fff691eb266bc5f",
+                    "url": "https://download.kde.org/stable/frameworks/6.11/kuserfeedback-6.11.0.tar.xz",
+                    "sha256": "ac516b7b8f9cd0891664f8b580d0a5a5c494cf6b5dbfddd87b6f6256548b7910",
                     "x-checker-data": {
                         "type": "anitya",
                         "project-id": 8762,
@@ -159,8 +159,8 @@
             "sources": [
                 {
                     "type": "archive",
-                    "url": "https://github.com/tbeu/matio/archive/v1.5.27.tar.gz",
-                    "sha256": "2efe7c4a206885287c0f56128f3a36aa6e453077d03e4c2c42cdce9d332b67eb",
+                    "url": "https://github.com/tbeu/matio/archive/v1.5.28.tar.gz",
+                    "sha256": "04d14160a637ea822593c336b231227372179f650250c98024a8a2b744afef25",
                     "x-checker-data": {
                         "type": "anitya",
                         "project-id": 1893,
@@ -174,7 +174,8 @@
             "name": "discount",
             "buildsystem": "simple",
             "build-commands": [
-                "./configure.sh --prefix=/app --confdir=/etc --pkg-config",
+                "./configure.sh --prefix=/app --confdir=/etc --pkg-config --enable-all-features --with-fenced-code --shared",
+                "sed -e 's|/sbin/ldconfig|/sbin/ldconfig -n|' -i librarian.sh",
                 "make",
                 "make install"
             ],
@@ -192,8 +193,8 @@
             "sources": [
                 {
                     "type": "archive",
-                    "url": "https://download.kde.org/stable/release-service/24.05.1/src/cantor-24.05.1.tar.xz",
-                    "sha256": "8da087918a5205876266eec0cdc45a900d632c6fec3491257842cd82409f1f1e",
+                    "url": "https://download.kde.org/stable/release-service/24.12.2/src/cantor-24.12.2.tar.xz",
+                    "sha256": "3ed32518fa56e4ee3712afe5baba433eb44cadb4aad21284537cb773d3238cd3",
                     "x-checker-data": {
                         "type": "anitya",
                         "project-id": 236341,
@@ -209,8 +210,8 @@
                     "sources": [
                         {
                             "type": "archive",
-                            "url": "https://download.kde.org/stable/release-service/24.05.1/src/analitza-24.05.1.tar.xz",
-                            "sha256": "4e207a5e2e086a6a76a2d1744b36cb069379154275b3b7c5b97317f1b5ef8079",
+                            "url": "https://download.kde.org/stable/release-service/24.12.2/src/analitza-24.12.2.tar.xz",
+                            "sha256": "66045536eeaf24cad7119cb4bc5922ea081c9f36b63602adf8ca03a748f4c438",
                             "x-checker-data": {
                                 "type": "anitya",
                                 "project-id": 8763,
@@ -262,8 +263,8 @@
                     "sources": [
                         {
                             "type": "archive",
-                            "url": "https://poppler.freedesktop.org/poppler-24.06.1.tar.xz",
-                            "sha256": "1e629e8732286c745fbc0b15a3ee591443fb37a2210856e7f3ec38a0fb93ab13",
+                            "url": "https://poppler.freedesktop.org/poppler-25.02.0.tar.xz",
+                            "sha256": "21234cb2a9647d73c752ce4031e65a79d11a511a835f2798284c2497b8701dee",
                             "x-checker-data": {
                                 "type": "anitya",
                                 "project-id": 3686,
@@ -280,8 +281,8 @@
                             "sources": [
                                 {
                                     "type": "archive",
-                                    "url": "https://github.com/uclouvain/openjpeg/archive/v2.5.2.tar.gz",
-                                    "sha256": "90e3896fed910c376aaf79cdd98bdfdaf98c6472efd8e1debf0a854938cbda6a",
+                                    "url": "https://github.com/uclouvain/openjpeg/archive/v2.5.3.tar.gz",
+                                    "sha256": "368fe0468228e767433c9ebdea82ad9d801a3ad1e4234421f352c8b06e7aa707",
                                     "x-checker-data": {
                                         "type": "anitya",
                                         "project-id": 2550,
@@ -299,19 +300,19 @@
                             "name": "boost",
                             "buildsystem": "simple",
                             "build-commands": [
-                                "./bootstrap.sh --prefix=/app --with-libraries=system",
+                                "./bootstrap.sh --prefix=/app --with-libraries=system,iostreams,program_options,filesystem,date_time",
                                 "./b2 -j $FLATPAK_BUILDER_N_JOBS install"
                             ],
                             "sources": [
                                 {
                                     "type": "archive",
-                                    "url": "https://boostorg.jfrog.io/artifactory/main/release/1.85.0/source/boost_1_85_0.tar.bz2",
-                                    "sha256": "7009fe1faa1697476bdc7027703a2badb84e849b7b0baad5086b087b971f8617",
+                                    "url": "https://archives.boost.io/release/1.87.0/source/boost_1_87_0.tar.bz2",
+                                    "sha256": "af57be25cb4c4f4b413ed692fe378affb4352ea50fbe294a11ef548f4d527d89",
                                     "x-checker-data": {
                                         "type": "anitya",
                                         "project-id": 6845,
                                         "stable-only": true,
-                                        "url-template": "https://boostorg.jfrog.io/artifactory/main/release/$version/source/boost_${major}_${minor}_$patch.tar.bz2"
+                                        "url-template": "https://archives.boost.io/release/$version/source/boost_${major}_${minor}_$patch.tar.bz2"
                                     }
                                 }
                             ]
@@ -335,14 +336,17 @@
             "name": "dbc_parser_cpp",
             "buildsystem": "cmake-ninja",
             "config-opts": [
-                "-DENABLE_TESTS=OFF",
-                "-DBUILD_DOCUMENTATION=OFF"
+                "-DDBC_ENABLE_TESTS=OFF"
             ],
             "sources": [
                 {
                     "type": "git",
                     "url": "https://github.com/LinuxDevon/dbc_parser_cpp.git",
-                    "tag": "0f3b22b3fe124976a86a85fcd1bfdd55c20ca428"
+                    "tag": "cc4e80c7b6e1f7a13cc47b45f226756f823888e2"
+                },
+                {
+                    "type": "patch",
+                    "path": "dbc_parser_cpp.patch"
                 }
             ]
         },
@@ -358,6 +362,54 @@
             ]
         },
         {
+            "name": "mdds",
+            "sources": [
+                {
+                    "type": "archive",
+                    "url": "https://gitlab.com/api/v4/projects/mdds%2Fmdds/packages/generic/source/3.0.0/mdds-3.0.0.tar.xz",
+                    "sha256": "9b077e8d929050e9a432cc131beed2380ac85cfe98b17fc26d01d0ed532129c8",
+                    "x-checker-data": {
+                        "type": "anitya",
+                        "project-id": 1962,
+                        "stable-only": true,
+                        "url-template": "https://gitlab.com/api/v4/projects/mdds%2Fmdds/packages/generic/source/$version/mdds-$version.tar.xz"
+                    }
+                }
+            ]
+        },
+        {
+            "name": "libixion",
+            "sources": [
+                {
+                    "type": "archive",
+                    "url": "https://gitlab.com/api/v4/projects/ixion%2Fixion/packages/generic/source/0.20.0/libixion-0.20.0.tar.xz",
+                    "sha256": "8466a05f19f60b7568641a449704666308848f7bcaf8335f92ee9474a451e4cd",
+                    "x-checker-data": {
+                        "type": "anitya",
+                        "project-id": 6208,
+                        "stable-only": true,
+                        "url-template": "https://gitlab.com/api/v4/projects/ixion%2Fixion/packages/generic/source/$version/libixion-$version.tar.xz"
+                    }
+                }
+            ]
+        },
+        {
+            "name": "liborcus",
+            "sources": [
+                {
+                    "type": "archive",
+                    "url": "https://gitlab.com/api/v4/projects/orcus%2Forcus/packages/generic/source/0.20.0/liborcus-0.20.0.tar.xz",
+                    "sha256": "fb6438977a75e7f455b772acf80d861fbc787ab18d52f7997af44a212311a507",
+                    "x-checker-data": {
+                        "type": "anitya",
+                        "project-id": 1696,
+                        "stable-only": true,
+                        "url-template": "https://gitlab.com/api/v4/projects/orcus%2Forcus/packages/generic/source/$version/liborcus-$version.tar.xz"
+                    }
+                }
+            ]
+        },
+        {
             "name": "labplot",
             "buildsystem": "cmake-ninja",
             "config-opts": [
@@ -369,18 +421,14 @@
             "sources": [
                 {
                     "type": "archive",
-                    "url": "https://download.kde.org/stable/labplot/labplot-2.10.1.tar.xz",
-                    "sha256": "2b6e181517cfb6e0dfff7b895f3eb20c7ce359e6732d38545e0757c9aea2daef",
+                    "url": "https://download.kde.org/stable/labplot/labplot-2.11.1.tar.xz",
+                    "sha256": "53aa6ac8df39324d99463e60d88de25346b3928da5bb0f210b0563489046679d",
                     "x-checker-data": {
                         "type": "anitya",
                         "project-id": 1532,
                         "stable-only": true,
                         "url-template": "https://download.kde.org/stable/labplot/labplot-$version.tar.xz"
                     }
-                },
-                {
-                    "type": "patch",
-                    "path": "labplot-2.10.1.patch"
                 }
             ]
         }
