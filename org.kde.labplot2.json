@@ -12,6 +12,7 @@
         "--filesystem=host",
         "--share=ipc",
         "--share=network",
+        "--device=dri",
         "--socket=fallback-x11",
         "--socket=wayland"
     ],
