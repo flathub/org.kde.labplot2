@@ -160,8 +160,8 @@
             "sources": [
                 {
                     "type": "archive",
-                    "url": "https://github.com/tbeu/matio/archive/v1.5.27.tar.gz",
-                    "sha256": "2efe7c4a206885287c0f56128f3a36aa6e453077d03e4c2c42cdce9d332b67eb",
+                    "url": "https://github.com/tbeu/matio/archive/v1.5.28.tar.gz",
+                    "sha256": "04d14160a637ea822593c336b231227372179f650250c98024a8a2b744afef25",
                     "x-checker-data": {
                         "type": "anitya",
                         "project-id": 1893,
