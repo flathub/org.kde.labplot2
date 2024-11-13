@@ -1,6 +1,6 @@
-diff -ruNa labplot-2.11.1.orig/src/backend/datasources/filters/AsciiFilter.cpp labplot-2.11.1/src/backend/datasources/filters/AsciiFilter.cpp
---- labplot-2.11.1.orig/src/backend/datasources/filters/AsciiFilter.cpp	2024-07-15 22:50:37.000000000 +0200
-+++ labplot-2.11.1/src/backend/datasources/filters/AsciiFilter.cpp	2024-11-13 22:19:02.989697570 +0100
+diff -ruNa a/src/backend/datasources/filters/AsciiFilter.cpp b/src/backend/datasources/filters/AsciiFilter.cpp
+--- a/src/backend/datasources/filters/AsciiFilter.cpp	2024-07-15 22:50:37.000000000 +0200
++++ b/src/backend/datasources/filters/AsciiFilter.cpp	2024-11-13 22:19:02.989697570 +0100
 @@ -665,8 +665,13 @@
  		DEBUG(Q_FUNC_INFO << ", column mode (after checking more lines) = " << ENUM_TO_STRING(AbstractColumn, ColumnMode, mode));
  #endif
