@@ -306,10 +306,6 @@
                                         "stable-only": true,
                                         "url-template": "https://boostorg.jfrog.io/artifactory/main/release/$version/source/boost_${major}_${minor}_$patch.tar.bz2"
                                     }
-                                },
-                		{
-                                    "type": "patch",
-                                    "path": "labplot-2.11.1.patch"
                                 }
                             ]
                         }
@@ -425,6 +421,10 @@
                         "stable-only": true,
                         "url-template": "https://download.kde.org/stable/labplot/labplot-$version.tar.xz"
                     }
+                },
+		{
+		    "type": "patch",
+                    "path": "labplot-2.11.1.patch"
                 }
             ]
         }
