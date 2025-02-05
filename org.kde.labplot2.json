@@ -205,8 +205,8 @@
                     "sources": [
                         {
                             "type": "archive",
-                            "url": "https://github.com/KDE/analitza/archive/v23.08.5.tar.gz",
-                            "sha256": "4b0336166e03ddad50f169233ba63d3c2d555a1a6a8f5b33e3867bdf33224d4a"
+                            "url": "https://github.com/KDE/analitza/archive/v24.08.3.tar.gz",
+                            "sha256": "e40c563c6387200321e7b903bff2d66ed0454f322d58126761411fccbdaf1467"
                         }
                     ],
                     "modules": [
