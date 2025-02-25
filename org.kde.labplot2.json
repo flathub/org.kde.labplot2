@@ -420,7 +420,6 @@
             "buildsystem": "cmake-ninja",
             "config-opts": [
                 "-DCMAKE_BUILD_TYPE=Release",
-                "-DQt5Mqtt_DIR=/app/qtmqtt/usr/lib/x86_64-linux-gnu/cmake/Qt5Mqtt",
                 "-DLOCAL_DBC_PARSER=OFF",
                 "-DLOCAL_VECTOR_BLF=OFF"
             ],
