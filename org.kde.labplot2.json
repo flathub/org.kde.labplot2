@@ -1,9 +1,9 @@
 {
     "app-id": "org.kde.labplot2",
     "runtime": "org.kde.Platform",
-    "runtime-version": "6.7",
+    "runtime-version": "6.8",
     "base": "io.qt.qtwebengine.BaseApp",
-    "base-version": "6.7",
+    "base-version": "6.8",
     "sdk": "org.kde.Sdk",
     "command": "labplot2",
     "rename-icon": "labplot2",
@@ -96,10 +96,15 @@
             "builddir": true,
             "sources": [
                 {
-                    "type": "git",
-                    "url": "https://github.com/qt/qtmqtt.git",
-                    "commit": "c51ab1f9e99dbfbef54b0f466ce2f0dde74a6b07",
-                    "tag": "v6.6.2"
+                    "type": "archive",
+                    "url": "https://github.com/qt/qtmqtt/archive/refs/tags/v6.8.2.tar.gz",
+                    "sha256": "a8c49b6996d7f0042b7721cd7f8ea06589e86c7a9c4c5d5a29176399402eacb5",
+                    "x-checker-data": {
+                        "type": "anitya",
+                        "project-id": 242923,
+                        "stable-only": true,
+                        "url-template": "https://github.com/qt/qtmqtt/archive/refs/tags/v$version.tar.gz"
+                    }
                 }
             ]
         },
