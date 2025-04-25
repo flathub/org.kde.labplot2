@@ -186,14 +186,13 @@
             "build-commands": [
                 "./configure.sh --prefix=/app --confdir=/etc --pkg-config --enable-all-features --with-fenced-code --shared",
                 "sed -e 's|/sbin/ldconfig|/sbin/ldconfig -n|' -i librarian.sh",
-                "make",
                 "make install"
             ],
             "sources": [
                 {
                     "type": "archive",
-                    "url": "https://github.com/Orc/discount/archive/v2.2.7d.tar.gz",
-                    "sha256": "eb9f6629dadddb44c3111267b82e51d5fb8364e228cc3533fe937d8a99e0155b"
+                    "url": "https://github.com/Orc/discount/archive/v3.0.0d.tar.gz",
+                    "sha256": "0ed8cc27ac5d46dc6a8beedd5e5673ac8b466a6474bdb7d35f37c815f670385f"
                 }
             ]
         },
