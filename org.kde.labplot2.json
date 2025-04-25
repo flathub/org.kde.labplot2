@@ -6,7 +6,7 @@
     "base-version": "6.8",
     "sdk": "org.kde.Sdk",
     "command": "labplot2",
-    "rename-icon": "labplot2",
+    "rename-icon": "labplot",
     "finish-args": [
         "--filesystem=/tmp",
         "--filesystem=host",
