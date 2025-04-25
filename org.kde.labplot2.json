@@ -424,7 +424,8 @@
             "config-opts": [
                 "-DCMAKE_BUILD_TYPE=Release",
                 "-DLOCAL_DBC_PARSER=OFF",
-                "-DLOCAL_VECTOR_BLF=OFF"
+                "-DLOCAL_VECTOR_BLF=OFF",
+                "-DENABLE_TESTS=OFF"
             ],
             "sources": [
                 {
