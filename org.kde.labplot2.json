@@ -1,12 +1,12 @@
 {
     "app-id": "org.kde.labplot2",
     "runtime": "org.kde.Platform",
-    "runtime-version": "5.15-23.08",
+    "runtime-version": "6.8",
     "base": "io.qt.qtwebengine.BaseApp",
-    "base-version": "5.15-23.08",
+    "base-version": "6.8",
     "sdk": "org.kde.Sdk",
-    "command": "labplot2",
-    "rename-icon": "labplot2",
+    "command": "labplot",
+    "rename-icon": "labplot",
     "finish-args": [
         "--filesystem=/tmp",
         "--filesystem=host",
@@ -46,14 +46,18 @@
         },
         {
             "name": "hdf5",
+            "buildsystem": "simple",
+            "build-commands": [
+                   "cd hdf5* && ./configure --prefix=/app --enable-cxx=yes --enable-tools=no --enable-tests=no && make -j install"
+            ],
             "cleanup": [
                 "/share/hdf5_examples"
             ],
             "sources": [
                 {
                     "type": "archive",
-                    "url": "https://support.hdfgroup.org/ftp/HDF5/releases/hdf5-1.10/hdf5-1.10.8/src/hdf5-1.10.8.tar.gz",
-                    "sha256": "d341b80d380dd763753a0ebe22915e11e87aac4e44a084a850646ff934d19c80"
+                    "url": "https://support.hdfgroup.org/releases/hdf5/v1_14/v1_14_6/downloads/hdf5-1.14.6.tar.gz",
+                    "sha256": "e4defbac30f50d64e1556374aa49e574417c9e72c6b1de7a4ff88c4b1bea6e9b"
                 }
             ]
         },
@@ -92,17 +96,19 @@
         },
         {
             "name": "qtmqtt",
-            "buildsystem": "qmake",
+            "buildsystem": "cmake-ninja",
             "builddir": true,
-            "make-install-args": [
-                "INSTALL_ROOT=/app/qtmqtt"
-            ],
             "sources": [
                 {
-                    "type": "git",
-                    "url": "https://github.com/qt/qtmqtt.git",
-                    "commit": "cade213f562049400da81e60762400df68d7c56b",
-                    "tag": "v5.15.2"
+                    "type": "archive",
+                    "url": "https://github.com/qt/qtmqtt/archive/refs/tags/v6.8.2.tar.gz",
+                    "sha256": "a8c49b6996d7f0042b7721cd7f8ea06589e86c7a9c4c5d5a29176399402eacb5",
+                    "x-checker-data": {
+                        "type": "anitya",
+                        "project-id": 242923,
+                        "stable-only": true,
+                        "url-template": "https://github.com/qt/qtmqtt/archive/refs/tags/v$version.tar.gz"
+                    }
                 }
             ]
         },
@@ -126,17 +132,20 @@
         },
         {
             "name": "kuserfeedback",
+            "config-opts": [
+                "-DBUILD_TESTING=OFF"
+            ],
             "buildsystem": "cmake-ninja",
             "sources": [
                 {
                     "type": "archive",
-                    "url": "https://download.kde.org/stable/kuserfeedback/kuserfeedback-1.3.0.tar.xz",
-                    "sha256": "252308b822dd4690ea85ab1688c9b0da5512978ac6b435f77a5979fc1d2ffd13",
+                    "url": "https://download.kde.org/stable/frameworks/6.11/kuserfeedback-6.11.0.tar.xz",
+                    "sha256": "ac516b7b8f9cd0891664f8b580d0a5a5c494cf6b5dbfddd87b6f6256548b7910",
                     "x-checker-data": {
                         "type": "anitya",
-                        "project-id": 138221,
+                        "project-id": 8762,
                         "stable-only": true,
-                        "url-template": "https://download.kde.org/stable/kuserfeedback/kuserfeedback-$version.tar.xz"
+                        "url-template": "https://download.kde.org/stable/frameworks/$major.$minor/kuserfeedback-$version.tar.xz"
                     }
                 }
             ]
@@ -177,14 +186,13 @@
             "build-commands": [
                 "./configure.sh --prefix=/app --confdir=/etc --pkg-config --enable-all-features --with-fenced-code --shared",
                 "sed -e 's|/sbin/ldconfig|/sbin/ldconfig -n|' -i librarian.sh",
-                "make",
                 "make install"
             ],
             "sources": [
                 {
                     "type": "archive",
-                    "url": "https://github.com/Orc/discount/archive/v2.2.7d.tar.gz",
-                    "sha256": "eb9f6629dadddb44c3111267b82e51d5fb8364e228cc3533fe937d8a99e0155b"
+                    "url": "https://github.com/Orc/discount/archive/v3.0.0d.tar.gz",
+                    "sha256": "0ed8cc27ac5d46dc6a8beedd5e5673ac8b466a6474bdb7d35f37c815f670385f"
                 }
             ]
         },
@@ -194,8 +202,14 @@
             "sources": [
                 {
                     "type": "archive",
-                    "url": "https://download.kde.org/stable/release-service/24.08.3/src/cantor-24.08.3.tar.xz",
-                    "sha256": "5621f65a6207029c5694e1fcf48b1f1bf7ae6b38377ea1ff1123f9d40f45c94c"
+                    "url": "https://download.kde.org/stable/release-service/24.12.2/src/cantor-24.12.2.tar.xz",
+                    "sha256": "3ed32518fa56e4ee3712afe5baba433eb44cadb4aad21284537cb773d3238cd3",
+                    "x-checker-data": {
+                        "type": "anitya",
+                        "project-id": 236341,
+                        "stable-only": true,
+                        "url-template": "https://download.kde.org/stable/release-service/$version/src/cantor-$version.tar.xz"
+                    }
                 }
             ],
             "modules": [
@@ -205,8 +219,14 @@
                     "sources": [
                         {
                             "type": "archive",
-                            "url": "https://github.com/KDE/analitza/archive/v23.08.5.tar.gz",
-                            "sha256": "4b0336166e03ddad50f169233ba63d3c2d555a1a6a8f5b33e3867bdf33224d4a"
+                            "url": "https://download.kde.org/stable/release-service/24.12.2/src/analitza-24.12.2.tar.xz",
+                            "sha256": "66045536eeaf24cad7119cb4bc5922ea081c9f36b63602adf8ca03a748f4c438",
+                            "x-checker-data": {
+                                "type": "anitya",
+                                "project-id": 8763,
+                                "stable-only": true,
+                                "url-template": "https://download.kde.org/stable/release-service/$version/src/analitza-$version.tar.xz"
+                            }
                         }
                     ],
                     "modules": [
@@ -235,17 +255,20 @@
                 },
                 {
                     "name": "poppler",
-                    "config-opts": [
-                        "-DENABLE_TESTING=OFF",
-                        "-DENABLE_UNSTABLE_API_ABI_HEADERS=ON",
-                        "-DENABLE_CPP=OFF",
-                        "-DENABLE_GLIB=OFF",
-                        "-DENABLE_GOBJECT_INTROSPECTION=OFF",
-                        "-DENABLE_UTILS=OFF",
-                        "-DENABLE_QT6=OFF"
-                    ],
                     "buildsystem": "cmake-ninja",
                     "builddir": true,
+                    "config-opts": [
+                        "-DCMAKE_BUILD_TYPE=RelWithDebInfo",
+                        "-DBUILD_GTK_TESTS=OFF",
+                        "-DBUILD_QT5_TESTS=OFF",
+                        "-DBUILD_QT6_TESTS=OFF",
+                        "-DBUILD_CPP_TESTS=OFF",
+                        "-DENABLE_UTILS=OFF",
+                        "-DENABLE_CPP=OFF",
+                        "-DENABLE_GLIB=OFF",
+                        "-DENABLE_QT5=OFF",
+                        "-DENABLE_QT6=ON"
+                    ],
                     "sources": [
                         {
                             "type": "archive",
@@ -400,15 +423,15 @@
             "buildsystem": "cmake-ninja",
             "config-opts": [
                 "-DCMAKE_BUILD_TYPE=Release",
-                "-DQt5Mqtt_DIR=/app/qtmqtt/usr/lib/x86_64-linux-gnu/cmake/Qt5Mqtt",
                 "-DLOCAL_DBC_PARSER=OFF",
-                "-DLOCAL_VECTOR_BLF=OFF"
+                "-DLOCAL_VECTOR_BLF=OFF",
+                "-DENABLE_TESTS=OFF"
             ],
             "sources": [
                 {
                     "type": "archive",
-                    "url": "https://download.kde.org/stable/labplot/labplot-2.11.1.tar.xz",
-                    "sha256": "53aa6ac8df39324d99463e60d88de25346b3928da5bb0f210b0563489046679d",
+                    "url": "https://download.kde.org/stable/labplot/labplot-2.12.0.tar.xz",
+                    "sha256": "25f1751261ec2d11312f0179049ea1f16db33b3a89800dc572d68ad8d267afe7",
                     "x-checker-data": {
                         "type": "anitya",
                         "project-id": 1532,
@@ -418,7 +441,7 @@
                 },
                 {
                     "type": "patch",
-                    "path": "labplot-2.11.1.patch"
+                    "path": "labplot-2.12.0.patch"
                 }
             ]
         }
