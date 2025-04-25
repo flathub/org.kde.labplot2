@@ -46,6 +46,10 @@
         },
         {
             "name": "hdf5",
+            "buildsystem": "simple",
+            "build-commands": [
+                   "cd hdf5* && ./configure --prefix=/app --enable-cxx=yes --enable-tools=no --enable-tests=no && make -j install"
+            ],
             "cleanup": [
                 "/share/hdf5_examples"
             ],
