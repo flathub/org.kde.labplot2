@@ -1,0 +1,12 @@
+diff -ruNa a/src/CMakeLists.txt b/src/CMakeLists.txt
+--- a/src/CMakeLists.txt	2025-04-25 01:04:43.000000000 +0200
++++ b/src/CMakeLists.txt	2025-04-25 22:34:15.390534144 +0200
+@@ -781,7 +781,7 @@
+ ############## installation ################################
+ install(TARGETS labplot ${KDE_INSTALL_TARGETS_DEFAULT_ARGS})
+ install(FILES ${FRONTEND_DIR}/splash.png ${FRONTEND_DIR}/labplot.ico ${CMAKE_CURRENT_SOURCE_DIR}/../icons/application-x-labplot.ico DESTINATION ${KDE_INSTALL_DATADIR}/${PROJECT_NAME})
+-install(FILES org.kde.labplot.desktop DESTINATION ${KDE_INSTALL_APPDIR})
++install(FILES org.kde.labplot2.desktop DESTINATION ${KDE_INSTALL_APPDIR})
+ install(FILES labplot.xml DESTINATION ${KDE_INSTALL_MIMEDIR})
+ # if(${ECM_VERSION} VERSION_GREATER "5.58.0")
+ #     install(FILES labplot2_themes.knsrc DESTINATION ${KDE_INSTALL_KNSRCDIR})
