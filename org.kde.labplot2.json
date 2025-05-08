@@ -101,14 +101,8 @@
             "sources": [
                 {
                     "type": "archive",
-                    "url": "https://github.com/qt/qtmqtt/archive/refs/tags/v6.9.0.tar.gz",
-                    "sha256": "7cdec84ca17ad2bd9d47418ca98820705a7798895a2315b5c20c46528a29547e",
-                    "x-checker-data": {
-                        "type": "anitya",
-                        "project-id": 242923,
-                        "stable-only": true,
-                        "url-template": "https://github.com/qt/qtmqtt/archive/refs/tags/v$version.tar.gz"
-                    }
+                    "url": "https://github.com/qt/qtmqtt/archive/refs/tags/v6.8.3.tar.gz",
+                    "sha256": "e921bb965c43417235a1d93d3b91fbbb66f18d022bf7b91a5ca39d5215f49232"
                 }
             ]
         },
