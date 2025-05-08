@@ -101,8 +101,8 @@
             "sources": [
                 {
                     "type": "archive",
-                    "url": "https://github.com/qt/qtmqtt/archive/refs/tags/v6.8.3.tar.gz",
-                    "sha256": "e921bb965c43417235a1d93d3b91fbbb66f18d022bf7b91a5ca39d5215f49232",
+                    "url": "https://github.com/qt/qtmqtt/archive/refs/tags/v6.9.0.tar.gz",
+                    "sha256": "7cdec84ca17ad2bd9d47418ca98820705a7798895a2315b5c20c46528a29547e",
                     "x-checker-data": {
                         "type": "anitya",
                         "project-id": 242923,
@@ -202,8 +202,8 @@
             "sources": [
                 {
                     "type": "archive",
-                    "url": "https://download.kde.org/stable/release-service/25.04.0/src/cantor-25.04.0.tar.xz",
-                    "sha256": "98f96661f20ad4c91fa5fe64bc0ecbef03d85969b64851c660d2d369682c3f00",
+                    "url": "https://download.kde.org/stable/release-service/25.04.1/src/cantor-25.04.1.tar.xz",
+                    "sha256": "8e96b9044b00aa11fbd60c2f848238a14de947501c65725ac3092c4ffad7a8b6",
                     "x-checker-data": {
                         "type": "anitya",
                         "project-id": 236341,
@@ -219,8 +219,8 @@
                     "sources": [
                         {
                             "type": "archive",
-                            "url": "https://download.kde.org/stable/release-service/25.04.0/src/analitza-25.04.0.tar.xz",
-                            "sha256": "67390eec5438d69390f2d1ba589604cb8a7817f86bc931acc24f029ab2db3f2c",
+                            "url": "https://download.kde.org/stable/release-service/25.04.1/src/analitza-25.04.1.tar.xz",
+                            "sha256": "3e0c8df800b69655c3d528970b3fbfe6faf8248b61d069ac1a8d77555381ef70",
                             "x-checker-data": {
                                 "type": "anitya",
                                 "project-id": 8763,
@@ -272,8 +272,8 @@
                     "sources": [
                         {
                             "type": "archive",
-                            "url": "https://poppler.freedesktop.org/poppler-25.04.0.tar.xz",
-                            "sha256": "b010c596dce127fba88532fd2f1043e55ea30601767952d0f2c0a80e7dc0da3d",
+                            "url": "https://poppler.freedesktop.org/poppler-25.05.0.tar.xz",
+                            "sha256": "9b1627c5b76816ac5e4052a03f5b605ba40b45cf06b02cadd0479620b499ab38",
                             "x-checker-data": {
                                 "type": "anitya",
                                 "project-id": 3686,
