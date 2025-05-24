@@ -133,14 +133,9 @@
             "sources": [
                 {
                     "type": "archive",
-                    "url": "https://download.kde.org/stable/frameworks/6.14/kuserfeedback-6.14.0.tar.xz",
-                    "sha256": "24acd6d2b8582bdd6ae9bfca97278a96763ee184a6cdecbc0dcd64fd4fc238b2",
-                    "x-checker-data": {
-                        "type": "anitya",
-                        "project-id": 8762,
-                        "stable-only": true,
-                        "url-template": "https://download.kde.org/stable/frameworks/$major.$minor/kuserfeedback-$version.tar.xz"
-                    }
+                    "url": "https://download.kde.org/stable/frameworks/6.13/kuserfeedback-6.13.0.tar.xz",
+                    "sha256": "48c186482fe7a6f1017a7e50b3a16fd7c10c10f7f963c00f32c61bb073404b9a",
+		    "_comment": "requires minimum ecm version provided by runtime"
                 }
             ]
         },
