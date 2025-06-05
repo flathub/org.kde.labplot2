@@ -134,8 +134,7 @@
                 {
                     "type": "archive",
                     "url": "https://download.kde.org/stable/frameworks/6.13/kuserfeedback-6.13.0.tar.xz",
-                    "sha256": "48c186482fe7a6f1017a7e50b3a16fd7c10c10f7f963c00f32c61bb073404b9a",
-                    "_comment": "requires minimum ecm version provided by runtime"
+                    "sha256": "48c186482fe7a6f1017a7e50b3a16fd7c10c10f7f963c00f32c61bb073404b9a"
                 }
             ]
         },
@@ -191,8 +190,8 @@
             "sources": [
                 {
                     "type": "archive",
-                    "url": "https://download.kde.org/stable/release-service/25.04.1/src/cantor-25.04.1.tar.xz",
-                    "sha256": "8e96b9044b00aa11fbd60c2f848238a14de947501c65725ac3092c4ffad7a8b6",
+                    "url": "https://download.kde.org/stable/release-service/25.04.2/src/cantor-25.04.2.tar.xz",
+                    "sha256": "8cb744b18da22de4315b300f88b3e580eb2af559918187a73b78b3948615be74",
                     "x-checker-data": {
                         "type": "anitya",
                         "project-id": 236341,
@@ -208,8 +207,8 @@
                     "sources": [
                         {
                             "type": "archive",
-                            "url": "https://download.kde.org/stable/release-service/25.04.1/src/analitza-25.04.1.tar.xz",
-                            "sha256": "3e0c8df800b69655c3d528970b3fbfe6faf8248b61d069ac1a8d77555381ef70",
+                            "url": "https://download.kde.org/stable/release-service/25.04.2/src/analitza-25.04.2.tar.xz",
+                            "sha256": "47177e0a8400e108491b769b825ef4990f3dd97b3348eec182da3e65e5704db7",
                             "x-checker-data": {
                                 "type": "anitya",
                                 "project-id": 8763,
